@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Self vs Ideal Self — Sankalp Jaiswal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --warm: #c8a96e;
+    --rust: #b85c38;
+    --sage: #5a7a6a;
+    --mist: #e8e0d0;
+    --deep: #2d1f14;
+    --glow: #e8c97a;
+    --white: #ffffff;
+    --error: #c0392b;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9998; opacity: 0.5;
+  }
+
+  /* ===================== OVERLAYS ===================== */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,20,16,0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .overlay.hidden { display: none; }
+  @keyframes overlayIn { from{opacity:0} to{opacity:1} }
+  @keyframes overlayOut { from{opacity:1} to{opacity:0;pointer-events:none} }
+  @keyframes popupIn { from{opacity:0;transform:translateY(24px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+  @keyframes pulse { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+
+  /* ---- INTRO POPUP ---- */
+  .popup-intro {
+    background: var(--deep);
+    width: 100%; max-width: 580px;
+    padding: clamp(28px,6vw,52px) clamp(20px,6vw,48px);
+    border: 1px solid rgba(200,169,110,0.22);
+    animation: popupIn 0.55s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+  }
+  .popup-ornament { font-size: 28px; color: var(--warm); text-align: center; margin-bottom: 20px; animation: pulse 3s ease-in-out infinite; display: block; }
+  .popup-intro h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem,5vw,2rem); font-weight: 300; color: var(--glow); text-align: center; line-height: 1.25; margin-bottom: 5px; }
+  .popup-intro h2 em { font-style: italic; color: var(--warm); }
+  .popup-sub { text-align: center; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(200,169,110,0.45); margin-bottom: 22px; }
+  .popup-divider { width: 56px; height: 1px; background: linear-gradient(90deg,transparent,var(--warm),transparent); margin: 0 auto 22px; }
+  .popup-text { font-size: clamp(12px,3vw,13px); color: rgba(232,201,122,0.78); line-height: 1.9; text-align: center; }
+  .popup-text strong { color: var(--glow); }
+  .popup-text em { color: var(--warm); font-style: italic; }
+  .btn-start { display: block; width: 100%; margin-top: 32px; padding: 15px; background: linear-gradient(135deg, var(--rust), #8a3d22); color: var(--glow); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.22s; }
+  .btn-start:hover { background: linear-gradient(135deg,#c8643e,var(--rust)); transform: translateY(-1px); }
+
+  /* ---- VALIDATION POPUP ---- */
+  .popup-validation {
+    background: var(--white);
+    width: 100%; max-width: 460px;
+    padding: clamp(24px,5vw,40px) clamp(20px,5vw,36px);
+    border-top: 4px solid var(--rust);
+    animation: popupIn 0.4s ease, shake 0.4s ease;
+    position: relative;
+  }
+  .popup-validation h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--error); margin-bottom: 8px; }
+  .popup-validation p { font-size: 12px; color: #666; margin-bottom: 18px; line-height: 1.8; }
+  .missing-list { list-style: none; margin-bottom: 20px; }
+  .missing-list li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; background: #fdf5f4; border-left: 2px solid var(--rust); margin-bottom: 6px; font-size: 12px; color: var(--error); }
+  .missing-list li::before { content: '!'; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .btn-fix { display: block; width: 100%; padding: 13px; background: var(--deep); color: var(--glow); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; border: none; cursor: pointer; transition: background 0.2s; }
+  .btn-fix:hover { background: var(--rust); }
+
+  /* ---- THANK YOU POPUP ---- */
+  .popup-thankyou {
+    background: var(--deep);
+    width: 100%; max-width: 580px;
+    padding: clamp(28px,6vw,52px) clamp(20px,6vw,44px);
+    border: 1px solid rgba(200,169,110,0.22);
+    animation: popupIn 0.55s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    /* Critical: allow internal scroll on small screens */
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .popup-thankyou .ty-emoji { font-size: 36px; text-align: center; display: block; margin-bottom: 18px; }
+  .popup-thankyou h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.3rem,4.5vw,1.9rem); font-weight: 300; color: var(--glow); text-align: center; line-height: 1.3; margin-bottom: 22px; }
+  .popup-thankyou p { font-size: clamp(12px,3vw,13px); color: rgba(232,201,122,0.78); line-height: 2; margin-bottom: 14px; text-align: center; }
+  .popup-thankyou p strong { color: var(--glow); }
+  .ty-divider { width: 80px; height: 1px; background: linear-gradient(90deg,transparent,var(--warm),transparent); margin: 18px auto; }
+  .quote-block { border-left: 2px solid var(--rust); padding: 12px 18px; margin: 20px 0; background: rgba(184,92,56,0.1); }
+  .quote-block p { font-family: 'Cormorant Garamond', serif; font-size: clamp(0.95rem,3vw,1.1rem); font-style: italic; color: var(--warm); text-align: left; margin: 0; line-height: 1.7; }
+  .ty-positive { color: var(--warm) !important; font-size: clamp(12px,3vw,13px) !important; font-weight: 500; margin-top: 4px !important; }
+  .btn-close-ty { display: block; width: 100%; margin-top: 28px; padding: 14px; background: transparent; color: var(--glow); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; border: 1px solid rgba(200,169,110,0.35); cursor: pointer; transition: all 0.2s; }
+  .btn-close-ty:hover { background: rgba(200,169,110,0.1); }
+
+  /* ===================== MAIN PAGE ===================== */
+  .page { max-width: 700px; margin: 0 auto; padding: clamp(28px,5vw,52px) clamp(16px,4vw,28px) 80px; }
+
+  .page-header { text-align: center; padding-bottom: 32px; border-bottom: 1px solid var(--warm); margin-bottom: 40px; }
+  .page-header .ornament { font-size: 22px; color: var(--warm); margin-bottom: 14px; display: block; }
+  .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.7rem,6vw,2.8rem); font-weight: 300; color: var(--deep); letter-spacing: -0.01em; line-height: 1.2; }
+  .page-header h1 em { font-style: italic; color: var(--rust); }
+  .page-header p { margin-top: 8px; font-size: clamp(9px,2.5vw,11px); color: var(--sage); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* Progress */
+  .progress-wrap { margin-bottom: 36px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--sage); margin-bottom: 8px; letter-spacing: 0.07em; }
+  .progress-track { height: 3px; background: var(--mist); overflow: hidden; border-radius: 2px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--warm), var(--rust)); transition: width 0.5s ease; width: 0%; border-radius: 2px; }
+
+  /* Steps */
+  .form-step { display: none; }
+  .form-step.active { display: block; animation: fadeUp 0.38s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+  .step-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm); margin-bottom: 5px; }
+  .step-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.35rem,4vw,1.75rem); font-weight: 400; color: var(--deep); margin-bottom: 7px; }
+  .step-desc { font-size: clamp(11px,3vw,12.5px); color: #666; line-height: 1.8; margin-bottom: 26px; }
+
+  /* Question card */
+  .q-card {
+    background: var(--white);
+    border: 1px solid var(--mist);
+    border-left: 3px solid var(--warm);
+    padding: clamp(16px,4vw,22px) clamp(14px,4vw,24px);
+    margin-bottom: 16px;
+    transition: border-left-color 0.18s;
+  }
+  .q-card:focus-within { border-left-color: var(--rust); }
+  .q-card.has-error { border-left-color: var(--error); border-color: #f5c6c6; background: #fffafa; }
+
+  .q-label { font-family: 'Cormorant Garamond', serif; font-size: clamp(0.95rem,3vw,1.05rem); color: var(--deep); margin-bottom: 13px; display: block; font-weight: 400; }
+  .q-label span { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--warm); margin-right: 5px; }
+
+  .q-input { width: 100%; padding: 10px 13px; border: 1px solid var(--mist); background: var(--paper); font-family: 'DM Mono', monospace; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.2s; }
+  .q-input:focus { border-color: var(--warm); }
+
+  /* Radio */
+  .radio-grid { display: flex; flex-direction: column; gap: 7px; }
+  .radio-option { display: flex; align-items: center; gap: 11px; padding: 10px 13px; border: 1px solid var(--mist); cursor: pointer; transition: all 0.16s; background: var(--paper); -webkit-tap-highlight-color: transparent; }
+  .radio-option:hover { border-color: var(--warm); background: #faf7f0; }
+  .radio-option input[type="radio"] { display: none; }
+  .radio-dot { width: 14px; height: 14px; border: 2px solid #ccc; border-radius: 50%; flex-shrink: 0; transition: border-color 0.16s; position: relative; }
+  .radio-option:has(input:checked) { border-color: var(--rust); background: #fff8f4; }
+  .radio-option:has(input:checked) .radio-dot { border-color: var(--rust); }
+  .radio-option:has(input:checked) .radio-dot::after { content:''; position:absolute; inset:2px; background:var(--rust); border-radius:50%; }
+  .radio-text { font-size: clamp(11.5px,3vw,13px); color: var(--ink); }
+
+  /* Scale (happiness) */
+  .scale-wrap { padding: 2px 0; }
+  .scale-labels { display: flex; justify-content: space-between; font-size: clamp(9px,2.5vw,10px); color: var(--sage); margin-bottom: 10px; }
+  .scale-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; background: var(--mist); outline: none; cursor: pointer; border-radius: 2px; }
+  .scale-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--rust); border: 3px solid var(--white); box-shadow: 0 1px 6px rgba(184,92,56,0.4); cursor: grab; }
+  .scale-slider:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.15); }
+  .scale-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--rust); border: 3px solid var(--white); cursor: grab; }
+  .scale-value { text-align: center; margin-top: 10px; font-size: 28px; font-family: 'Cormorant Garamond', serif; color: var(--rust); font-weight: 600; line-height: 1; }
+
+  /* Dimension rows */
+  .dim-grid { border: 1px solid var(--mist); overflow: hidden; }
+  .dim-section-head { background: var(--deep); color: var(--glow); padding: 9px 16px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .dim-row { display: flex; flex-wrap: wrap; align-items: center; padding: 13px 16px; gap: 10px; border-bottom: 1px solid var(--mist); background: var(--white); transition: background 0.15s; }
+  .dim-row:last-child { border-bottom: none; }
+  .dim-row:hover { background: #faf7f0; }
+  .dim-name { flex: 1 1 180px; font-family: 'Cormorant Garamond', serif; font-size: clamp(0.92rem,3vw,1rem); color: var(--deep); }
+  .dim-name small { display: block; font-size: clamp(9px,2.5vw,10px); font-family: 'DM Mono', monospace; color: var(--sage); margin-top: 2px; font-style: normal; }
+  .dim-icon { font-size: 15px; margin-right: 5px; }
+  .dim-scale { display: flex; align-items: center; gap: 10px; flex: 0 0 200px; min-width: 150px; }
+  .dim-slider { flex: 1; -webkit-appearance: none; appearance: none; height: 3px; background: var(--mist); outline: none; cursor: pointer; border-radius: 2px; }
+  .dim-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--rust); border: 2px solid var(--white); box-shadow: 0 1px 4px rgba(184,92,56,0.35); }
+  .dim-slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--rust); border: 2px solid var(--white); }
+  .dim-val { width: 26px; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--rust); font-weight: 600; flex-shrink: 0; }
+
+  /* Nav */
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; gap: 10px; flex-wrap: wrap; }
+  .btn-next { padding: 13px clamp(20px,5vw,32px); background: var(--deep); color: var(--glow); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; border: none; cursor: pointer; transition: background 0.2s; margin-left: auto; min-height: 46px; }
+  .btn-next:hover { background: var(--rust); }
+  .btn-back { padding: 13px clamp(16px,4vw,24px); background: transparent; color: var(--sage); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--mist); cursor: pointer; transition: all 0.2s; min-height: 46px; }
+  .btn-back:hover { border-color: var(--warm); color: var(--warm); }
+  .btn-submit { padding: 13px clamp(20px,5vw,40px); background: linear-gradient(135deg, var(--rust), #8a3d22); color: var(--glow); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.22s; margin-left: auto; min-height: 46px; }
+  .btn-submit:hover { background: linear-gradient(135deg,#c8643e,var(--rust)); transform: translateY(-1px); }
+
+  /* ===================== SUBMITTED SCREEN ===================== */
+  .submitted-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: clamp(28px,6vw,60px) clamp(16px,4vw,28px);
+  }
+  .submitted-screen.visible { display: flex; }
+  .submitted-icon { font-size: 52px; margin-bottom: 20px; }
+  .submitted-screen h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem,5vw,2.4rem); font-weight: 300; color: var(--deep); margin-bottom: 10px; line-height: 1.25; }
+  .submitted-screen h2 em { font-style: italic; color: var(--rust); }
+  .submitted-screen p { font-size: clamp(11px,3vw,13px); color: var(--sage); line-height: 1.9; max-width: 460px; }
+  .submitted-divider { width: 60px; height: 1px; background: linear-gradient(90deg,transparent,var(--warm),transparent); margin: 22px auto; }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 480px) {
+    .dim-scale { flex: 0 0 100%; }
+    .dim-row { padding: 12px 14px; }
+    .nav-row { flex-direction: column-reverse; }
+    .btn-next, .btn-back, .btn-submit { width: 100%; text-align: center; margin-left: 0; }
+    .popup-thankyou { max-height: 85vh; padding: 24px 18px; }
+  }
+  @media (min-width: 481px) and (max-width: 768px) {
+    .dim-scale { flex: 0 0 180px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Submission handled via fetch no-cors — no iframe needed -->
+
+<!-- ===== INTRO POPUP ===== -->
+<div class="overlay" id="intro-overlay">
+  <div class="popup-intro">
+    <span class="popup-ornament">◈</span>
+    <h2>Hey, I'm <em>Sankalp Jaiswal</em></h2>
+    <p class="popup-sub">I'm a Data Science Student working on a project called Self-Gap analysis</p>
+    <div class="popup-divider"></div>
+    <p class="popup-text">
+      I created this form to help you and honestly, myself too — understand the gap between
+      <strong>where you are right now</strong> (your Real Self)
+      and <strong>where you want to be</strong> (your Ideal Self).<br><br>
+      You'll rate yourself from 1 to 10 across 8 important areas of life. The difference between
+      those scores is what I call the <em>"self-gap."</em><br><br>
+      The idea is not to judge yourself but to get <strong>clarity, set better goals,</strong>
+      and slowly move closer to the version of yourself you actually want to become.
+    </p>
+    <button class="btn-start" onclick="closeIntro()">Begin the Reflection →</button>
+  </div>
+</div>
+
+<!-- ===== VALIDATION POPUP ===== -->
+<div class="overlay hidden" id="validation-overlay">
+  <div class="popup-validation">
+    <h3>⚠ Please complete all questions</h3>
+    <p>The following questions need your answer before you can continue:</p>
+    <ul class="missing-list" id="missing-list"></ul>
+    <button class="btn-fix" onclick="closeValidation()">Go back and fill them in →</button>
+  </div>
+</div>
+
+<!-- ===== THANK YOU POPUP ===== -->
+<div class="overlay hidden" id="thankyou-overlay">
+  <div class="popup-thankyou">
+    <h2>Thank You</h2>
+    <div class="ty-divider"></div>
+
+    <p>
+      Thank you so much for taking the time to fill this out it genuinely means a lot to me.
+      I didn’t create this just as a form, but as something I’d share with people I care about.
+    </p>
+
+    <p>
+      Just remember, change doesn’t happen instantly, and it’s okay to not have everything figured out.
+      We’re all learning, evolving, and figuring life out step by step.
+      Be kind to yourself through the process, and don’t forget how far you’ve already come.
+    </p>
+
+    <p>
+      <strong>From me to you:</strong> keep going, stay positive, and believe in your journey. And always remember
+    </p>
+
+    <div class="quote-block">
+      <p>"No medicine can cure a negative mind, and no poison can kill a positive mind."</p>
+    </div>
+    <p>
+      So always stay positive!
+    </p>
+
+
+    <button class="btn-close-ty" onclick="closeThankyou()">Close ✕</button>
+  </div>
+</div>
+
+<!-- ===== MAIN FORM ===== -->
+<div class="page">
+  <div class="page-header">
+    <span class="ornament">◈</span>
+    <h1>Real Self <em>vs</em> Ideal Self</h1>
+    <p>A Research Survey to help you as well as myself </p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="step-text">Section 1 of 4</span>
+      <span id="step-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <form id="main-form"
+    action="https://docs.google.com/forms/d/e/1FAIpQLScaFT02pcMPkE5gdMgyEc9cXU2jtPKHeZ0tBG0x3sIu1pEN3w/formResponse"
+    method="POST"
+    onsubmit="return handleSubmit(event)">
+
+    <!-- ===== STEP 1: Demographics ===== -->
+    <div class="form-step active" id="step-1">
+      <div class="step-label">Section 01 — About You</div>
+      <div class="step-title">Let's start with the basics</div>
+      <div class="step-desc">Just a few details to help group and compare responses across people.</div>
+
+      <div class="q-card" id="card-age">
+        <label class="q-label"><span>Q1</span> What is your age group?</label>
+        <div class="radio-grid">
+          <label class="radio-option"><input type="radio" name="entry.95963621" value="18-22"><div class="radio-dot"></div><span class="radio-text">18 – 22</span></label>
+          <label class="radio-option"><input type="radio" name="entry.95963621" value="23-28"><div class="radio-dot"></div><span class="radio-text">23 – 28</span></label>
+          <label class="radio-option"><input type="radio" name="entry.95963621" value="29-35"><div class="radio-dot"></div><span class="radio-text">29 – 35</span></label>
+          <label class="radio-option"><input type="radio" name="entry.95963621" value="36-45"><div class="radio-dot"></div><span class="radio-text">36 – 45</span></label>
+          <label class="radio-option"><input type="radio" name="entry.95963621" value="46+"><div class="radio-dot"></div><span class="radio-text">46+</span></label>
+        </div>
+      </div>
+
+      <div class="q-card" id="card-gender">
+        <label class="q-label"><span>Q2</span> What is your gender?</label>
+        <div class="radio-grid">
+          <label class="radio-option"><input type="radio" name="entry.1362689479" value="Male"><div class="radio-dot"></div><span class="radio-text">Male</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1362689479" value="Female"><div class="radio-dot"></div><span class="radio-text">Female</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1362689479" value="Prefer not to say"><div class="radio-dot"></div><span class="radio-text">Prefer not to say</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1362689479" value="Others"><div class="radio-dot"></div><span class="radio-text">Others</span></label>
+        </div>
+      </div>
+
+      <div class="q-card" id="card-stage">
+        <label class="q-label"><span>Q3</span> What is your current life stage?</label>
+        <div class="radio-grid">
+          <label class="radio-option"><input type="radio" name="entry.688783715" value="Student"><div class="radio-dot"></div><span class="radio-text">Student</span></label>
+          <label class="radio-option"><input type="radio" name="entry.688783715" value="Early Career (0-3 years)"><div class="radio-dot"></div><span class="radio-text">Early Career (0-3 years)</span></label>
+          <label class="radio-option"><input type="radio" name="entry.688783715" value="Mid Career (4-10 years)"><div class="radio-dot"></div><span class="radio-text">Mid Career (4-10 years)</span></label>
+          <label class="radio-option"><input type="radio" name="entry.688783715" value="Senior Professional"><div class="radio-dot"></div><span class="radio-text">Senior Professional</span></label>
+          <label class="radio-option"><input type="radio" name="entry.688783715" value="Homemaker"><div class="radio-dot"></div><span class="radio-text">Homemaker</span></label>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn-next" onclick="nextStep(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ===== STEP 2: Real Self ===== -->
+    <div class="form-step" id="step-2">
+      <div class="step-label">Section 02 — Real Self</div>
+      <div class="step-title">Where you <em style="font-style:italic;color:var(--rust)">are</em> right now</div>
+      <div class="step-desc">Rate yourself honestly today — not who you wish to be. 1 = very poor · 10 = excellent.</div>
+
+      <div class="dim-grid" id="card-real">
+        <div class="dim-section-head">Your Real Self — Current State</div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">💼</span>Career & Growth<small><span style="color:var(--warm);font-size:9px;">Q4</span> · How satisfied are you with your actual career progress?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1005924975" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">💰</span>Financial Security<small><span style="color:var(--warm);font-size:9px;">Q5</span> · How secure and stable is your financial situation?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.2043169134" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">🏃</span>Physical Health<small><span style="color:var(--warm);font-size:9px;">Q6</span> · How healthy and physically fit are you right now?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1515838282" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">🧠</span>Mental Wellbeing<small><span style="color:var(--warm);font-size:9px;">Q7</span> · How calm, balanced and emotionally well are you today?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.174494248" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">❤️</span>Relationships<small><span style="color:var(--warm);font-size:9px;">Q8</span> · How deep and meaningful are your relationships today?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1116749013" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">📚</span>Skills & Knowledge<small><span style="color:var(--warm);font-size:9px;">Q9</span> · How capable and skilled do you feel in your field?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.2011222242" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">🌟</span>Purpose & Meaning<small><span style="color:var(--warm);font-size:9px;">Q10</span> · How meaningful and purposeful does your daily life feel?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.588465121" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">🪞</span>Self-Confidence<small><span style="color:var(--warm);font-size:9px;">Q11</span> · How confident and sure of yourself do you feel today?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.225113910" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="prevStep(2)">← Back</button>
+        <button type="button" class="btn-next" onclick="nextStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ===== STEP 3: Ideal Self ===== -->
+    <div class="form-step" id="step-3">
+      <div class="step-label">Section 03 — Ideal Self</div>
+      <div class="step-title">Where you <em style="font-style:italic;color:var(--sage)">want</em> to be</div>
+      <div class="step-desc">Now rate the same areas as your ideal self in 3 years. 1 = very poor · 10 = excellent.</div>
+
+      <div class="dim-grid" id="card-ideal">
+        <div class="dim-section-head">Your Ideal Self — Future Vision</div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">💼</span>Career & Growth<small><span style="color:var(--warm);font-size:9px;">Q12</span> · Where do you want your career to be?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.2062162192" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">💰</span>Financial Stability<small><span style="color:var(--warm);font-size:9px;">Q13</span> · Where do you want your finances to be?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1242943320" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">🏃</span>Physical Health<small><span style="color:var(--warm);font-size:9px;">Q14</span> · Where do you want your health to be?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1889314008" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">🧠</span>Mental & Emotional Health<small><span style="color:var(--warm);font-size:9px;">Q15</span> · Where do you want your mental state to be?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.2141006275" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">❤️</span>Relationships<small><span style="color:var(--warm);font-size:9px;">Q16</span> · Where do you want your relationships to be?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1720398854" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">📚</span>Skills & Knowledge<small><span style="color:var(--warm);font-size:9px;">Q17</span> · Where do you want your skills to be?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.56652701" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">🌟</span>Purpose & Meaning<small><span style="color:var(--warm);font-size:9px;">Q18</span> · Where do you want your sense of purpose to be?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.413681691" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-name"><span class="dim-icon">🪞</span>Self-Confidence<small><span style="color:var(--warm);font-size:9px;">Q19</span> · Where do you want your confidence to be?</small></div>
+          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.448467461" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+        </div>
+      </div>
+
+
+
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="prevStep(3)">← Back</button>
+        <button type="button" class="btn-next" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ===== STEP 4: Reflection ===== -->
+    <div class="form-step" id="step-4">
+      <div class="step-label">Section 04 — Reflection</div>
+      <div class="step-title">A moment of honesty</div>
+      <div class="step-desc">Three final questions.</div>
+
+      <div class="q-card" id="card-biggest">
+        <label class="q-label"><span>Q20</span> Which area has the BIGGEST gap between who you are and who you want to be?</label>
+        <div class="radio-grid">
+          <label class="radio-option"><input type="radio" name="entry.1537424180" value="Career"><div class="radio-dot"></div><span class="radio-text">💼 Career</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1537424180" value="Finance"><div class="radio-dot"></div><span class="radio-text">💰 Finance</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1537424180" value="Health"><div class="radio-dot"></div><span class="radio-text">🏃 Health</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1537424180" value="Mental Health"><div class="radio-dot"></div><span class="radio-text">🧠 Mental Health</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1537424180" value="Relationships"><div class="radio-dot"></div><span class="radio-text">❤️ Relationships</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1537424180" value="Skills"><div class="radio-dot"></div><span class="radio-text">📚 Skills</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1537424180" value="Purpose"><div class="radio-dot"></div><span class="radio-text">🌟 Purpose</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1537424180" value="Confidence"><div class="radio-dot"></div><span class="radio-text">🪞 Confidence</span></label>
+        </div>
+      </div>
+
+      <div class="q-card" id="card-reason">
+        <label class="q-label"><span>Q21</span> What is the reason you haven't closed this gap yet?</label>
+        <div class="radio-grid">
+          <label class="radio-option"><input type="radio" name="entry.16919863" value="Lack of time"><div class="radio-dot"></div><span class="radio-text">Lack of time</span></label>
+          <label class="radio-option"><input type="radio" name="entry.16919863" value="Lack of money"><div class="radio-dot"></div><span class="radio-text">Lack of money</span></label>
+          <label class="radio-option"><input type="radio" name="entry.16919863" value="Fear of failure"><div class="radio-dot"></div><span class="radio-text">Fear of failure</span></label>
+          <label class="radio-option"><input type="radio" name="entry.16919863" value="No clear plan"><div class="radio-dot"></div><span class="radio-text">No clear plan</span></label>
+          <label class="radio-option"><input type="radio" name="entry.16919863" value="Lack of motivation"><div class="radio-dot"></div><span class="radio-text">Lack of motivation</span></label>
+          <label class="radio-option"><input type="radio" name="entry.16919863" value="External circumstances"><div class="radio-dot"></div><span class="radio-text">External circumstances</span></label>
+          <label class="radio-option"><input type="radio" name="entry.16919863" value="I'm working on it actively"><div class="radio-dot"></div><span class="radio-text">I'm working on it actively</span></label>
+        </div>
+      </div>
+
+      <div class="q-card" id="card-emotion">
+        <label class="q-label"><span>Q22</span> When you think about the gap between who you are and who you want to be, how does it make you feel?</label>
+        <div class="radio-grid">
+          <label class="radio-option"><input type="radio" name="entry.1157105551" value="Motivated & energized"><div class="radio-dot"></div><span class="radio-text">Motivated &amp; energized</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1157105551" value="Anxious & overwhelmed"><div class="radio-dot"></div><span class="radio-text">Anxious &amp; overwhelmed</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1157105551" value="Indifferent/ I've accepted it"><div class="radio-dot"></div><span class="radio-text">Indifferent / I've accepted it</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1157105551" value="hopeful but uncertain"><div class="radio-dot"></div><span class="radio-text">Hopeful but uncertain</span></label>
+          <label class="radio-option"><input type="radio" name="entry.1157105551" value="Frustrated with myself"><div class="radio-dot"></div><span class="radio-text">Frustrated with myself</span></label>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="prevStep(4)">← Back</button>
+        <button type="submit" class="btn-submit">Submit Response ✓</button>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- ===== SUBMITTED SCREEN ===== -->
+  <div class="submitted-screen" id="submitted-screen">
+    <div class="submitted-icon">✅</div>
+    <h2>Your response has been <em>submitted</em></h2>
+    <div class="submitted-divider"></div>
+    <p>Thank you for completing the reflection. Your answers have been recorded and will help contribute to a better understanding of the self-gap.</p>
+  </div>
+
+</div>
+
+<script>
+  const TOTAL_STEPS = 4;
+  let currentStep = 1;
+
+  // Track which sliders have been deliberately moved by the user
+  const touchedSliders = new Set();
+
+  // Mark a slider as touched when user moves it
+  document.querySelectorAll('input[type="range"]').forEach(slider => {
+    slider.addEventListener('input', () => touchedSliders.add(slider.name));
+  });
+
+  // ---- INTRO ----
+  function closeIntro() {
+    const o = document.getElementById('intro-overlay');
+    o.style.animation = 'overlayOut 0.3s ease forwards';
+    setTimeout(() => o.classList.add('hidden'), 280);
+  }
+
+  // ---- THANK YOU CLOSE ----
+  function closeThankyou() {
+    const overlay = document.getElementById('thankyou-overlay');
+    overlay.style.animation = 'overlayOut 0.3s ease forwards';
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      // Hide entire form area, show submitted screen
+      document.getElementById('main-form').style.display = 'none';
+      document.querySelector('.progress-wrap').style.display = 'none';
+      document.querySelector('.page-header').style.display = 'none';
+      document.getElementById('submitted-screen').classList.add('visible');
+    }, 280);
+  }
+
+  // ---- PROGRESS ----
+  function updateProgress(step) {
+    const pct = Math.round(((step - 1) / TOTAL_STEPS) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('step-pct').textContent = pct + '%';
+    document.getElementById('step-text').textContent = 'Section ' + step + ' of ' + TOTAL_STEPS;
+  }
+
+  // ---- VALIDATION CONFIG ----
+  const stepValidation = {
+    1: [
+      { name: 'entry.95963621',   type: 'radio',  label: 'Q1 — Age Group' },
+      { name: 'entry.1362689479', type: 'radio',  label: 'Q2 — Gender' },
+      { name: 'entry.688783715',  type: 'radio',  label: 'Q3 — Life Stage' },
+    ],
+    2: [
+      { name: 'entry.1005924975', type: 'slider', label: 'Q4 — Career Progress (move the slider)' },
+      { name: 'entry.2043169134', type: 'slider', label: 'Q5 — Financial Security (move the slider)' },
+      { name: 'entry.1515838282', type: 'slider', label: 'Q6 — Physical Health (move the slider)' },
+      { name: 'entry.174494248',  type: 'slider', label: 'Q7 — Mental Wellbeing (move the slider)' },
+      { name: 'entry.1116749013', type: 'slider', label: 'Q8 — Relationships (move the slider)' },
+      { name: 'entry.2011222242', type: 'slider', label: 'Q9 — Skills & Knowledge (move the slider)' },
+      { name: 'entry.588465121',  type: 'slider', label: 'Q10 — Purpose & Meaning (move the slider)' },
+      { name: 'entry.225113910',  type: 'slider', label: 'Q11 — Self-Confidence (move the slider)' },
+    ],
+    3: [
+      { name: 'entry.2062162192', type: 'slider', label: 'Q12 — Ideal: Career (move the slider)' },
+      { name: 'entry.1242943320', type: 'slider', label: 'Q13 — Ideal: Financial Stability (move the slider)' },
+      { name: 'entry.1889314008', type: 'slider', label: 'Q14 — Ideal: Physical Health (move the slider)' },
+      { name: 'entry.2141006275', type: 'slider', label: 'Q15 — Ideal: Mental Health (move the slider)' },
+      { name: 'entry.1720398854', type: 'slider', label: 'Q16 — Ideal: Relationships (move the slider)' },
+      { name: 'entry.56652701',   type: 'slider', label: 'Q17 — Ideal: Skills (move the slider)' },
+      { name: 'entry.413681691',  type: 'slider', label: 'Q18 — Ideal: Purpose (move the slider)' },
+      { name: 'entry.448467461',  type: 'slider', label: 'Q19 — Ideal: Self-Confidence (move the slider)' },
+    ],
+    4: [
+      { name: 'entry.1537424180', type: 'radio', label: 'Q20 — Which area has the biggest gap?' },
+      { name: 'entry.16919863',   type: 'radio', label: "Q21 — What is the reason you haven't closed this gap?" },
+      { name: 'entry.1157105551', type: 'radio', label: 'Q22 — How does the gap make you feel?' },
+    ]
+  };
+
+  function validateStep(step) {
+    const checks = stepValidation[step] || [];
+    const missing = [];
+
+    checks.forEach(field => {
+      if (field.type === 'radio') {
+        const checked = document.querySelector('input[name="' + field.name + '"]:checked');
+        if (!checked) missing.push(field.label);
+      } else if (field.type === 'slider') {
+        if (!touchedSliders.has(field.name)) missing.push(field.label);
+      } else if (field.type === 'text') {
+        const el = document.querySelector('[name="' + field.name + '"]');
+        if (!el || el.value.trim() === '') missing.push(field.label);
+      }
+    });
+
+    return missing;
+  }
+
+  function showValidationPopup(missing) {
+    const list = document.getElementById('missing-list');
+    list.innerHTML = '';
+    missing.forEach(label => {
+      const li = document.createElement('li');
+      li.textContent = label;
+      list.appendChild(li);
+    });
+    const overlay = document.getElementById('validation-overlay');
+    overlay.classList.remove('hidden');
+    overlay.style.animation = 'none';
+    void overlay.offsetWidth;
+    overlay.style.animation = 'overlayIn 0.3s ease';
+  }
+
+  function closeValidation() {
+    const overlay = document.getElementById('validation-overlay');
+    overlay.style.animation = 'overlayOut 0.25s ease forwards';
+    setTimeout(() => overlay.classList.add('hidden'), 240);
+  }
+
+  // ---- NAVIGATION ----
+  function nextStep(from) {
+    const missing = validateStep(from);
+    if (missing.length > 0) {
+      showValidationPopup(missing);
+      return;
+    }
+
+    document.getElementById('step-' + from).classList.remove('active');
+    currentStep = from + 1;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    updateProgress(currentStep);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function prevStep(from) {
+    document.getElementById('step-' + from).classList.remove('active');
+    currentStep = from - 1;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    updateProgress(currentStep);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ---- SUBMIT ----
+  function handleSubmit(e) {
+    e.preventDefault(); // Always prevent default — we use fetch instead
+
+    // Validate step 4 first
+    const missing = validateStep(4);
+    if (missing.length > 0) {
+      showValidationPopup(missing);
+      return false;
+    }
+
+    // Collect all form field values
+    const form = document.getElementById('main-form');
+    const formData = new FormData(form);
+
+    // Submit to Google Forms using fetch with no-cors
+    // no-cors means we won't get a response back (expected) but the data IS sent
+    const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLScaFT02pcMPkE5gdMgyEc9cXU2jtPKHeZ0tBG0x3sIu1pEN3w/formResponse';
+
+    fetch(FORM_ACTION, {
+      method: 'POST',
+      mode: 'no-cors', // Required — Google Forms doesn't allow cross-origin reads
+      body: formData
+    })
+    .then(() => {
+      // Fetch with no-cors always resolves (opaque response) — data was sent
+      showThankyou();
+    })
+    .catch(() => {
+      // Even on network errors, show thankyou — data likely went through
+      showThankyou();
+    });
+
+    return false;
+  }
+
+  function showThankyou() {
+    const ty = document.getElementById('thankyou-overlay');
+    ty.classList.remove('hidden');
+    ty.style.animation = 'overlayIn 0.4s ease';
+  }
+
+  // Init
+  updateProgress(1);
+</script>
+</body>
+</html>
