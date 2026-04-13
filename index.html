@@ -204,10 +204,22 @@
 
   /* Mobile: bigger tap target for dim sliders */
   @media (max-width: 768px) {
-    .dim-slider { height: 6px; padding: 10px 0; touch-action: pan-x; }
-    .dim-slider::-webkit-slider-thumb { width: 28px; height: 28px; border-width: 3px; }
+    .dim-slider {
+      height: 6px;
+      padding: 0;
+      margin: 10px 0;
+      touch-action: pan-x;
+    }
+    .dim-slider::-webkit-slider-runnable-track {
+      height: 6px;
+    }
+    .dim-slider::-webkit-slider-thumb {
+      width: 28px;
+      height: 28px;
+      border-width: 3px;
+      margin-top: -11px;
+    }
     .dim-slider::-moz-range-thumb { width: 26px; height: 26px; border-width: 3px; }
-    .dim-slider::-webkit-slider-container { padding: 10px 0; }
   }
 
   /* Alternating row tints */
@@ -952,10 +964,6 @@
 
     <p>
       Thank you so much for taking the time to fill this out it genuinely means a lot to me.
-      I didn’t create this just as a form, but as something I’d share with people I care about.
-    </p>
-
-    <p>
       Just remember, change doesn’t happen instantly, and it’s okay to not have everything figured out.
       We’re all learning, evolving, and figuring life out step by step.
       Be kind to yourself through the process, and don’t forget how far you’ve already come.
