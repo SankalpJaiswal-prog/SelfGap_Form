@@ -4,7 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Real Self vs Ideal Self — Sankalp Jaiswal</title>
+<meta property="og:title" content="Real Self vs Ideal Self — Discover Your Gap">
+<meta property="og:description" content="A reflective 5-minute survey by Sankalp Jaiswal">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Real Self vs Ideal Self — Discover Your Gap">
+<meta name="twitter:description" content="A reflective 5-minute survey by Sankalp Jaiswal">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
     --ink: #1a1410;
@@ -193,6 +201,29 @@
   .dim-slider { flex: 1; -webkit-appearance: none; appearance: none; height: 3px; background: var(--mist); outline: none; cursor: pointer; border-radius: 2px; }
   .dim-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--rust); border: 2px solid var(--white); box-shadow: 0 1px 4px rgba(184,92,56,0.35); }
   .dim-slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--rust); border: 2px solid var(--white); }
+
+  /* Mobile: bigger tap target for dim sliders */
+  @media (max-width: 768px) {
+    .dim-slider { height: 6px; padding: 10px 0; touch-action: pan-x; }
+    .dim-slider::-webkit-slider-thumb { width: 28px; height: 28px; border-width: 3px; }
+    .dim-slider::-moz-range-thumb { width: 26px; height: 26px; border-width: 3px; }
+    .dim-slider::-webkit-slider-container { padding: 10px 0; }
+  }
+
+  /* Alternating row tints */
+  .dim-row:nth-child(even) { background: #faf7f0; }
+  .dim-row:nth-child(odd) { background: var(--white); }
+  .dim-row:hover { background: #f5ede0 !important; }
+
+  /* Soft left-border accent per row */
+  .dim-row:nth-child(2) { border-left: 3px solid #c8a96e; }
+  .dim-row:nth-child(3) { border-left: 3px solid #b8860b; }
+  .dim-row:nth-child(4) { border-left: 3px solid #5a7a6a; }
+  .dim-row:nth-child(5) { border-left: 3px solid #b85c38; }
+  .dim-row:nth-child(6) { border-left: 3px solid #7a5a9a; }
+  .dim-row:nth-child(7) { border-left: 3px solid #3a7a8a; }
+  .dim-row:nth-child(8) { border-left: 3px solid #8a6a3a; }
+  .dim-row:nth-child(9) { border-left: 3px solid #6a8a5a; }
   .dim-val { width: 26px; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--rust); font-weight: 600; flex-shrink: 0; }
 
   /* Nav */
@@ -202,7 +233,87 @@
   .btn-back { padding: 13px clamp(16px,4vw,24px); background: transparent; color: var(--sage); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--mist); cursor: pointer; transition: all 0.2s; min-height: 46px; }
   .btn-back:hover { border-color: var(--warm); color: var(--warm); }
   .btn-submit { padding: 13px clamp(20px,5vw,40px); background: linear-gradient(135deg, var(--rust), #8a3d22); color: var(--glow); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.22s; margin-left: auto; min-height: 46px; }
-  .btn-submit:hover { background: linear-gradient(135deg,#c8643e,var(--rust)); transform: translateY(-1px); }
+  .btn-submit:hover:not(:disabled) { background: linear-gradient(135deg,#c8643e,var(--rust)); transform: translateY(-1px); }
+  .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+  .btn-submit .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(232,201,122,0.3); border-top-color: var(--glow); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 7px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Share + PDF buttons */
+  .submitted-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 8px; }
+  .btn-share { padding: 11px 28px; background: transparent; color: var(--sage); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--mist); cursor: pointer; transition: all 0.2s; }
+  .btn-share:hover { border-color: var(--warm); color: var(--warm); }
+  .share-nudge { font-size: 11px; color: var(--sage); line-height: 1.8; text-align: center; max-width: 400px; margin-top: 4px; }
+  .share-nudge a { color: var(--warm); text-decoration: none; font-weight: 500; }
+  .copy-confirm { font-size: 11px; color: var(--sage); display: none; margin-top: 4px; }
+  .copy-confirm.show { display: block; color: var(--rust); }
+
+  /* PDF / save button in report */
+  .btn-print-report {
+    display: block; width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--rust), #8a3d22);
+    color: var(--glow);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.22s;
+    margin-top: 10px;
+  }
+  .btn-print-report:hover { background: linear-gradient(135deg,#c8643e,var(--rust)); }
+
+  /* Preview teaser after step 3 */
+  #preview-teaser {
+    display: none;
+    margin-top: 24px;
+    border: 1px solid rgba(200,169,110,0.35);
+    background: var(--deep);
+    overflow: hidden;
+    position: relative;
+  }
+  #preview-teaser.visible { display: block; animation: fadeUp 0.4s ease; }
+  .teaser-blur-wrap {
+    position: relative;
+    padding: 20px 16px 12px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .teaser-blur-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    background: rgba(26,20,16,0.38);
+  }
+  .teaser-chart-preview { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .teaser-bar { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .teaser-bar-fill { width: 22px; background: linear-gradient(180deg, var(--rust), var(--warm)); border-radius: 2px 2px 0 0; }
+  .teaser-bar-label { font-size: 9px; font-family: 'DM Mono', monospace; color: rgba(232,201,122,0.6); letter-spacing: 0.05em; }
+  .teaser-unlock {
+    text-align: center;
+    padding: 18px 20px 22px;
+    position: relative;
+    z-index: 2;
+  }
+  .teaser-lock { font-size: 26px; margin-bottom: 8px; }
+  .teaser-unlock h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem,4vw,1.35rem);
+    color: var(--glow);
+    font-weight: 300;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .teaser-unlock p {
+    font-size: 11px;
+    color: rgba(200,169,110,0.6);
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+  .teaser-pulse { animation: pulse 2s ease-in-out infinite; display: inline-block; }
 
   /* ===================== SUBMITTED SCREEN ===================== */
   .submitted-screen {
@@ -221,6 +332,405 @@
   .submitted-screen p { font-size: clamp(11px,3vw,13px); color: var(--sage); line-height: 1.9; max-width: 460px; }
   .submitted-divider { width: 60px; height: 1px; background: linear-gradient(90deg,transparent,var(--warm),transparent); margin: 22px auto; }
 
+  /* ===================== TEXT INPUT (Email & Name) ===================== */
+  .q-input-text {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--mist);
+    background: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+  .q-input-text:focus { border-color: var(--warm); background: #fefcf7; }
+  .q-input-text.input-error { border-color: var(--error); background: #fffafa; }
+  .inline-error {
+    font-size: 11px;
+    color: var(--error);
+    margin-top: 6px;
+    display: none;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.03em;
+  }
+  .inline-error.show { display: block; }
+
+  /* ===================== SUBMITTED SCREEN REPORT BUTTON ===================== */
+  .btn-view-report {
+    margin-top: 22px;
+    padding: 15px 36px;
+    background: linear-gradient(135deg, var(--rust), #8a3d22);
+    color: var(--glow);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.22s;
+  }
+  .btn-view-report:hover { background: linear-gradient(135deg,#c8643e,var(--rust)); transform: translateY(-2px); }
+
+  /* ===================== REPORT OVERLAY ===================== */
+  #report-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,20,16,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 3000;
+    display: none;
+    overflow-y: auto;
+    padding: 24px 12px 48px;
+  }
+  #report-overlay.open { display: block; animation: overlayIn 0.35s ease; }
+
+  .report-modal {
+    max-width: 780px;
+    margin: 0 auto;
+    background: var(--paper);
+    overflow: hidden;
+  }
+
+  /* Report Hero */
+  .r-hero {
+    background: linear-gradient(135deg, var(--deep) 0%, #1a0f0a 100%);
+    padding: clamp(32px,6vw,56px) clamp(20px,5vw,48px) clamp(28px,5vw,44px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(200,169,110,0.2);
+  }
+  .r-hero::before {
+    content:'';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 65% 35%, rgba(200,169,110,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 25% 75%, rgba(184,92,56,0.10) 0%, transparent 50%);
+  }
+  .r-hero-close {
+    position: absolute; top: 14px; right: 16px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(232,201,122,0.7);
+    width: 34px; height: 34px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    font-family: 'DM Mono', monospace;
+    z-index: 2;
+  }
+  .r-hero-close:hover { background: rgba(184,92,56,0.3); color: var(--glow); }
+  .r-hero-ornament { font-size: 24px; color: var(--warm); display: block; margin-bottom: 14px; animation: pulse 3s ease-in-out infinite; position: relative; }
+  .r-hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem,5vw,2.4rem);
+    font-weight: 300;
+    color: var(--glow);
+    line-height: 1.2;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .r-hero h1 em { font-style: italic; color: var(--warm); }
+  .r-hero-sub {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(200,169,110,0.45);
+    position: relative;
+  }
+  .r-name-tag {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 5px 16px;
+    background: rgba(200,169,110,0.12);
+    border: 1px solid rgba(200,169,110,0.25);
+    color: var(--glow);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    font-family: 'DM Mono', monospace;
+    position: relative;
+  }
+
+  /* Report body */
+  .r-body { padding: clamp(24px,5vw,40px) clamp(16px,4vw,36px); }
+
+  /* Section title */
+  .r-sec-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem,3.5vw,1.35rem);
+    color: var(--deep);
+    font-weight: 400;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--mist);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* Scorecards */
+  .scorecard-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .scorecard {
+    background: var(--white);
+    border: 1px solid var(--mist);
+    border-top: 3px solid var(--warm);
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .sc-icon { font-size: 22px; display: block; margin-bottom: 8px; }
+  .sc-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem,6vw,2.8rem);
+    font-weight: 600;
+    color: var(--deep);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .sc-val.gold { color: var(--warm); }
+  .sc-val.rust { color: var(--rust); }
+  .sc-val.red { color: #c0392b; }
+  .sc-label {
+    font-size: 10px;
+    color: var(--sage);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Radar chart */
+  .radar-wrap {
+    background: var(--white);
+    border: 1px solid var(--mist);
+    padding: 20px;
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Gap bars */
+  .gap-bars-wrap { margin-bottom: 32px; }
+  .gap-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 9px;
+  }
+  .gb-label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--ink);
+    width: 110px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .gb-track {
+    flex: 1;
+    height: 8px;
+    background: var(--mist);
+    overflow: hidden;
+  }
+  .gb-fill { height: 100%; transition: width 1.2s ease; }
+  .gb-fill.green { background: #4a7c59; }
+  .gb-fill.amber { background: #b8860b; }
+  .gb-fill.red   { background: #b53a2f; }
+  .gb-scores {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--sage);
+    width: 68px;
+    text-align: right;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Archetype */
+  .archetype-card {
+    background: var(--deep);
+    padding: clamp(22px,5vw,36px) clamp(18px,4vw,32px);
+    margin-bottom: 32px;
+    text-align: center;
+    border: 1px solid rgba(200,169,110,0.18);
+    position: relative;
+    overflow: hidden;
+  }
+  .archetype-card::before {
+    content:'';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(200,169,110,0.12) 0%, transparent 65%);
+  }
+  .arch-emoji { font-size: 48px; display: block; margin-bottom: 12px; position: relative; }
+  .arch-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem,4vw,1.9rem);
+    color: var(--glow);
+    font-weight: 300;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .arch-desc {
+    font-size: clamp(11.5px,3vw,13px);
+    color: rgba(232,201,122,0.72);
+    line-height: 1.9;
+    max-width: 520px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Priority & Strength cards */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  @media(max-width:520px) { .two-col { grid-template-columns: 1fr; } }
+  .ps-card {
+    background: var(--white);
+    border: 1px solid var(--mist);
+    padding: 18px 16px;
+  }
+  .ps-card-title {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ps-card.priority .ps-card-title { color: #b53a2f; }
+  .ps-card.strength .ps-card-title { color: #4a7c59; }
+  .ps-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--mist);
+    font-size: 12px;
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+  }
+  .ps-item:last-child { border-bottom: none; }
+  .ps-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .priority .ps-dot { background: #b53a2f; }
+  .strength .ps-dot { background: #4a7c59; }
+
+  /* Action steps */
+  .actions-wrap { margin-bottom: 32px; }
+  .action-card {
+    background: var(--white);
+    border: 1px solid var(--mist);
+    border-left: 3px solid var(--rust);
+    padding: 18px 18px 18px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .action-num {
+    width: 32px; height: 32px;
+    background: var(--deep);
+    color: var(--glow);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .action-text h5 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--deep);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .action-text p {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.8;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Personal message */
+  .personal-msg {
+    background: linear-gradient(135deg, #fff8ee, #fef6e4);
+    border: 1px solid var(--warm);
+    border-left: 4px solid var(--rust);
+    padding: clamp(20px,5vw,32px) clamp(18px,4vw,28px);
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .personal-msg::before {
+    content: '♥';
+    position: absolute;
+    top: -1px; right: 18px;
+    font-size: 28px;
+    color: var(--rust);
+    opacity: 0.25;
+  }
+  .personal-msg-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem,3.5vw,1.3rem);
+    color: var(--deep);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .personal-msg p {
+    font-size: clamp(12px,3vw,13px);
+    color: #4a3828;
+    line-height: 1.95;
+    margin-bottom: 10px;
+    font-family: 'DM Mono', monospace;
+  }
+  .personal-msg p:last-child { margin-bottom: 0; }
+  .personal-msg strong { color: var(--deep); }
+  .personal-msg .crisis-line {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(184,92,56,0.08);
+    border-left: 2px solid var(--rust);
+    font-size: 12px;
+    color: var(--rust);
+    font-family: 'DM Mono', monospace;
+    line-height: 1.8;
+  }
+
+  /* Closing quote */
+  .closing-block {
+    background: var(--deep);
+    padding: clamp(22px,5vw,36px) clamp(18px,4vw,32px);
+    text-align: center;
+    border: 1px solid rgba(200,169,110,0.18);
+    margin-bottom: 8px;
+  }
+  .closing-block blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem,3.5vw,1.25rem);
+    font-style: italic;
+    color: var(--warm);
+    line-height: 1.8;
+    margin-bottom: 18px;
+  }
+  .closing-signoff { font-size: 11px; color: rgba(200,169,110,0.45); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-family: 'DM Mono', monospace; }
+  .closing-author { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--glow); font-weight: 400; }
+
+  /* Report close button at bottom */
+  .btn-close-report {
+    display: block; width: 100%;
+    padding: 14px;
+    background: transparent;
+    color: var(--sage);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid var(--mist);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+  }
+  .btn-close-report:hover { border-color: var(--warm); color: var(--warm); }
+
   /* ===================== RESPONSIVE ===================== */
   @media (max-width: 480px) {
     .dim-scale { flex: 0 0 100%; }
@@ -231,6 +741,172 @@
   }
   @media (min-width: 481px) and (max-width: 768px) {
     .dim-scale { flex: 0 0 180px; }
+  }
+
+  /* ===================== SHARE MODAL ===================== */
+  #share-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,20,16,0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 4000;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+  }
+  #share-modal-overlay.open {
+    display: flex;
+    animation: overlayIn 0.25s ease;
+  }
+  .share-modal-box {
+    background: var(--white);
+    width: 100%;
+    max-width: 540px;
+    border-radius: 18px 18px 0 0;
+    padding: 28px 24px 36px;
+    animation: shareSlideUp 0.32s cubic-bezier(0.34,1.4,0.64,1);
+  }
+  @keyframes shareSlideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .share-modal-handle {
+    width: 40px; height: 4px;
+    background: #ddd; border-radius: 4px;
+    margin: 0 auto 20px;
+  }
+  .share-modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem; font-weight: 400;
+    color: var(--deep); text-align: center;
+    margin-bottom: 6px;
+  }
+  .share-modal-sub {
+    font-size: 11px; color: var(--sage);
+    text-align: center; margin-bottom: 24px;
+    letter-spacing: 0.06em;
+  }
+  .share-apps-row {
+    display: flex; justify-content: center;
+    gap: 20px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .share-app-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
+    background: none; border: none; cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--ink); letter-spacing: 0.05em;
+    transition: transform 0.15s;
+    width: 64px;
+  }
+  .share-app-btn:hover { transform: translateY(-3px); }
+  .share-app-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  .share-app-icon.whatsapp  { background: #25D366; }
+  .share-app-icon.instagram { background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+  .share-app-icon.twitter   { background: #000; }
+  .share-app-icon.telegram  { background: #229ED9; }
+  .share-app-icon.linkedin  { background: #0A66C2; }
+  .share-app-icon.copy      { background: var(--mist); }
+  .share-divider { height: 1px; background: var(--mist); margin-bottom: 16px; }
+  .btn-share-cancel {
+    display: block; width: 100%; padding: 13px;
+    background: #f5f0e8; color: var(--sage);
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    border: none; cursor: pointer; border-radius: 6px;
+    transition: background 0.2s;
+  }
+  .btn-share-cancel:hover { background: var(--mist); }
+
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #fff !important; }
+    body::before { display: none; }
+    .page, .progress-wrap, .page-header, #submitted-screen, .overlay, #preview-teaser { display: none !important; }
+
+    #report-overlay {
+      position: static !important;
+      display: block !important;
+      background: #fff !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+
+    .report-modal {
+      max-width: 100% !important;
+      box-shadow: none !important;
+      background: #fff !important;
+    }
+
+    /* Hero section stays together */
+    .r-hero {
+      background: #2d1f14 !important;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+    .r-hero-close, .btn-close-report, .btn-print-report { display: none !important; }
+
+    /* Keep each section together — never cut in the middle */
+    .r-sec-title { page-break-after: avoid; break-after: avoid; orphans: 3; widows: 3; }
+
+    .scorecard-grid {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .scorecard { page-break-inside: avoid; break-inside: avoid; }
+
+    /* Radar chart: keep canvas + title together */
+    .radar-wrap {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      page-break-before: auto;
+      break-before: auto;
+    }
+
+    /* Gap bars: keep each row together */
+    .gap-bars-wrap { page-break-inside: avoid; break-inside: avoid; }
+    .gap-bar-row   { page-break-inside: avoid; break-inside: avoid; }
+
+    /* Archetype card: never split */
+    .archetype-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Priority / strength two-col: stay on same page */
+    .two-col {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .ps-card { page-break-inside: avoid; break-inside: avoid; }
+
+    /* Action cards: each stays whole */
+    .actions-wrap { page-break-inside: avoid; break-inside: avoid; }
+    .action-card  { page-break-inside: avoid; break-inside: avoid; }
+
+    /* Personal message: avoid splitting */
+    .personal-msg {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Closing block: keep together */
+    .closing-block {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Canvas sizing for radar */
+    canvas { max-width: 380px !important; max-height: 380px !important; display: block; margin: 0 auto; }
+
+    /* Page margins */
+    @page { margin: 1.4cm 1.2cm; size: A4; }
   }
 </style>
 </head>
@@ -285,7 +961,7 @@
       Be kind to yourself through the process, and don’t forget how far you’ve already come.
     </p>
 
-    <p>
+    <!-- <p>
       <strong>From me to you:</strong> keep going and believe in your journey. And always remember
     </p>
 
@@ -294,7 +970,7 @@
     </div>
     <p>
       So always stay positive!
-    </p>
+    </p> -->
 
 
     <button class="btn-close-ty" onclick="closeThankyou()">Close ✕</button>
@@ -327,6 +1003,33 @@
       <div class="step-label">Section 01 — About You</div>
       <div class="step-title">Let's start with the basics</div>
       <div class="step-desc">Just a few details to help group and compare responses across people.</div>
+
+      <div class="q-card" id="card-email">
+        <label class="q-label"><span>Q·A</span> What is your email address?</label>
+        <input
+          type="email"
+          id="field-email"
+          name="entry.1641810822"
+          class="q-input-text"
+          placeholder="e.g. yourname@gmail.com"
+          autocomplete="email"
+          inputmode="email"
+        >
+        <div class="inline-error" id="err-email">⚠ Please enter a valid email address (e.g. <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d333c30381d38253c302d3138733e3230">[email&#160;protected]</a>)</div>
+      </div>
+
+      <div class="q-card" id="card-fullname">
+        <label class="q-label"><span>Q·B</span> What is your full name?</label>
+        <input
+          type="text"
+          id="field-fullname"
+          name="entry.1211378632"
+          class="q-input-text"
+          placeholder="e.g. Sankalp Jaiswal"
+          autocomplete="name"
+        >
+        <div class="inline-error" id="err-fullname">⚠ Please enter your full name (first and last name, letters only)</div>
+      </div>
 
       <div class="q-card" id="card-age">
         <label class="q-label"><span>Q1</span> What is your age group?</label>
@@ -461,6 +1164,20 @@
         <button type="button" class="btn-back" onclick="prevStep(3)">← Back</button>
         <button type="button" class="btn-next" onclick="nextStep(3)">Continue →</button>
       </div>
+
+      <!-- PEEK TEASER -->
+      <div id="preview-teaser">
+        <div class="teaser-blur-wrap">
+          <div class="teaser-chart-preview" id="teaser-bars">
+            <!-- filled by JS -->
+          </div>
+        </div>
+        <div class="teaser-unlock">
+          <div class="teaser-lock teaser-pulse">🔒</div>
+          <h4>Your personal report is <em style="font-style:italic;color:var(--warm)">ready</em> — submit to unlock it</h4>
+          <p>One final section to go. Your radar chart, archetype, gap analysis &amp; personalised action plan await.</p>
+        </div>
+      </div>
     </div>
 
     <!-- ===== STEP 4: Reflection ===== -->
@@ -509,7 +1226,7 @@
 
       <div class="nav-row">
         <button type="button" class="btn-back" onclick="prevStep(4)">← Back</button>
-        <button type="submit" class="btn-submit">Submit Response ✓</button>
+        <button type="submit" class="btn-submit" id="btn-submit">Submit Response ✓</button>
       </div>
     </div>
 
@@ -521,11 +1238,71 @@
     <h2>Your response has been <em>submitted</em></h2>
     <div class="submitted-divider"></div>
     <p>Thank you for completing the reflection. Your answers have been recorded and will help contribute to a better understanding of the self-gap.</p>
+    <div class="submitted-actions">
+      <button class="btn-view-report" onclick="openReport()">✨ &nbsp;View My Insight Report</button>
+      <p class="share-nudge">Share this with someone who needs to reflect too →<br>
+        <button class="btn-share" onclick="openShareModal()" style="margin-top:8px;">↗ Share</button>
+      </p>
+      <div class="copy-confirm" id="copy-confirm">✓ Link copied to clipboard!</div>
+    </div>
   </div>
 
 </div>
 
-<script>
+<!-- ===== SHARE MODAL ===== -->
+<div id="share-modal-overlay" onclick="handleShareOverlayClick(event)">
+  <div class="share-modal-box" id="share-modal-box">
+    <div class="share-modal-handle"></div>
+    <div class="share-modal-title">Share this Reflection</div>
+    <div class="share-modal-sub">Invite someone you care about to discover their self-gap</div>
+    <div class="share-apps-row">
+      <button class="share-app-btn" onclick="shareVia('whatsapp')">
+        <div class="share-app-icon whatsapp">💬</div>
+        <span>WhatsApp</span>
+      </button>
+      <button class="share-app-btn" onclick="shareVia('instagram')">
+        <div class="share-app-icon instagram">📸</div>
+        <span>Instagram</span>
+      </button>
+      <button class="share-app-btn" onclick="shareVia('twitter')">
+        <div class="share-app-icon twitter" style="color:#fff;font-size:22px;font-family:serif;font-weight:700;">𝕏</div>
+        <span>X / Twitter</span>
+      </button>
+      <button class="share-app-btn" onclick="shareVia('telegram')">
+        <div class="share-app-icon telegram">✈️</div>
+        <span>Telegram</span>
+      </button>
+      <button class="share-app-btn" onclick="shareVia('linkedin')">
+        <div class="share-app-icon linkedin" style="color:#fff;font-size:22px;font-weight:700;font-family:serif;">in</div>
+        <span>LinkedIn</span>
+      </button>
+      <button class="share-app-btn" onclick="shareVia('copy')">
+        <div class="share-app-icon copy">🔗</div>
+        <span>Copy Link</span>
+      </button>
+    </div>
+    <div class="share-divider"></div>
+    <button class="btn-share-cancel" onclick="closeShareModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ===== REPORT OVERLAY ===== -->
+<div id="report-overlay">
+  <div class="report-modal">
+    <div class="r-hero">
+      <button class="r-hero-close" onclick="closeReport()">✕</button>
+      <span class="r-hero-ornament">◈</span>
+      <h1>Your <em>Insight Report</em></h1>
+      <p class="r-hero-sub">Real Self vs Ideal Self · Self-Gap Analysis</p>
+      <div class="r-name-tag" id="r-name-tag">Prepared for you</div>
+    </div>
+    <div class="r-body" id="r-body">
+      <!-- dynamically generated -->
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const TOTAL_STEPS = 4;
   let currentStep = 1;
 
@@ -569,6 +1346,8 @@
   // ---- VALIDATION CONFIG ----
   const stepValidation = {
     1: [
+      { name: 'email-field',        type: 'email',  label: 'Q·A — Email Address' },
+      { name: 'fullname-field',     type: 'name',   label: 'Q·B — Full Name' },
       { name: 'entry.95963621',   type: 'radio',  label: 'Q1 — Age Group' },
       { name: 'entry.1362689479', type: 'radio',  label: 'Q2 — Gender' },
       { name: 'entry.688783715',  type: 'radio',  label: 'Q3 — Life Stage' },
@@ -600,11 +1379,54 @@
     ]
   };
 
+  function isValidEmail(val) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim());
+  }
+  function isValidName(val) {
+    const trimmed = val.trim();
+    // At least 2 words, letters (including unicode/Indian names), spaces, hyphens
+    return /^[A-Za-z\u00C0-\u024F\u1E00-\u1EFF' -]{2,}(\s+[A-Za-z\u00C0-\u024F\u1E00-\u1EFF' -]{1,})+$/.test(trimmed);
+  }
+
   function validateStep(step) {
     const checks = stepValidation[step] || [];
     const missing = [];
 
+    // Special inline validation for email and name
+    if (step === 1) {
+      const emailEl = document.getElementById('field-email');
+      const nameEl  = document.getElementById('field-fullname');
+      const emailErr = document.getElementById('err-email');
+      const nameErr  = document.getElementById('err-fullname');
+
+      let emailOk = isValidEmail(emailEl.value);
+      let nameOk  = isValidName(nameEl.value);
+
+      if (!emailOk) {
+        emailEl.classList.add('input-error');
+        emailErr.classList.add('show');
+        document.getElementById('card-email').classList.add('has-error');
+        missing.push('Q·A — Valid email address required');
+      } else {
+        emailEl.classList.remove('input-error');
+        emailErr.classList.remove('show');
+        document.getElementById('card-email').classList.remove('has-error');
+      }
+
+      if (!nameOk) {
+        nameEl.classList.add('input-error');
+        nameErr.classList.add('show');
+        document.getElementById('card-fullname').classList.add('has-error');
+        missing.push('Q·B — Full name required (first + last name)');
+      } else {
+        nameEl.classList.remove('input-error');
+        nameErr.classList.remove('show');
+        document.getElementById('card-fullname').classList.remove('has-error');
+      }
+    }
+
     checks.forEach(field => {
+      if (field.type === 'email' || field.type === 'name') return; // handled above
       if (field.type === 'radio') {
         const checked = document.querySelector('input[name="' + field.name + '"]:checked');
         if (!checked) missing.push(field.label);
@@ -618,6 +1440,22 @@
 
     return missing;
   }
+
+  // Clear inline errors on input
+  document.getElementById('field-email').addEventListener('input', function() {
+    if (isValidEmail(this.value)) {
+      this.classList.remove('input-error');
+      document.getElementById('err-email').classList.remove('show');
+      document.getElementById('card-email').classList.remove('has-error');
+    }
+  });
+  document.getElementById('field-fullname').addEventListener('input', function() {
+    if (isValidName(this.value)) {
+      this.classList.remove('input-error');
+      document.getElementById('err-fullname').classList.remove('show');
+      document.getElementById('card-fullname').classList.remove('has-error');
+    }
+  });
 
   function showValidationPopup(missing) {
     const list = document.getElementById('missing-list');
@@ -648,6 +1486,11 @@
       return;
     }
 
+    // Show the teaser after completing step 3 (ideal self)
+    if (from === 3) {
+      renderTeaser();
+    }
+
     document.getElementById('step-' + from).classList.remove('active');
     currentStep = from + 1;
     document.getElementById('step-' + currentStep).classList.add('active');
@@ -665,36 +1508,31 @@
 
   // ---- SUBMIT ----
   function handleSubmit(e) {
-    e.preventDefault(); // Always prevent default — we use fetch instead
+    e.preventDefault();
 
-    // Validate step 4 first
     const missing = validateStep(4);
     if (missing.length > 0) {
       showValidationPopup(missing);
       return false;
     }
 
-    // Collect all form field values
+    // Loading state
+    const submitBtn = document.getElementById('btn-submit');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>Sending…';
+
     const form = document.getElementById('main-form');
     const formData = new FormData(form);
 
-    // Submit to Google Forms using fetch with no-cors
-    // no-cors means we won't get a response back (expected) but the data IS sent
     const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLScaFT02pcMPkE5gdMgyEc9cXU2jtPKHeZ0tBG0x3sIu1pEN3w/formResponse';
 
     fetch(FORM_ACTION, {
       method: 'POST',
-      mode: 'no-cors', // Required — Google Forms doesn't allow cross-origin reads
+      mode: 'no-cors',
       body: formData
     })
-    .then(() => {
-      // Fetch with no-cors always resolves (opaque response) — data was sent
-      showThankyou();
-    })
-    .catch(() => {
-      // Even on network errors, show thankyou — data likely went through
-      showThankyou();
-    });
+    .then(() => { showThankyou(); })
+    .catch(() => { showThankyou(); });
 
     return false;
   }
@@ -705,8 +1543,347 @@
     ty.style.animation = 'overlayIn 0.4s ease';
   }
 
-  // Init
-  updateProgress(1);
+  // ---- PRINT / SAVE AS PDF ----
+  function printReport() {
+    window.print();
+  }
+
+  // ---- SHARE MODAL ----
+  function openShareModal() {
+    // Try native Web Share API first (mobile browsers)
+    const shareUrl = window.location.href.split('?')[0];
+    const shareText = '✨ Discover your Self-Gap — how far are you from your ideal self? Take this 5-min reflection by Sankalp Jaiswal.';
+    if (navigator.share) {
+      navigator.share({ title: 'Real Self vs Ideal Self', text: shareText, url: shareUrl })
+        .catch(() => {}); // user cancelled — that's fine
+      return;
+    }
+    // Fallback: show custom modal
+    document.getElementById('share-modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeShareModal() {
+    document.getElementById('share-modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function handleShareOverlayClick(e) {
+    if (e.target === document.getElementById('share-modal-overlay')) closeShareModal();
+  }
+
+  function shareVia(platform) {
+    const shareUrl = encodeURIComponent(window.location.href.split('?')[0]);
+    const shareText = encodeURIComponent('✨ Discover your Self-Gap — how far are you from your ideal self? Take this 5-min reflection by Sankalp Jaiswal.');
+    let url = '';
+    switch (platform) {
+      case 'whatsapp':
+        url = `https://wa.me/?text=${shareText}%20${shareUrl}`;
+        break;
+      case 'instagram':
+        // Instagram has no direct URL share; copy link then open Instagram
+        copyToClipboard(decodeURIComponent(shareUrl));
+        showCopyConfirm('Link copied! Now paste it on Instagram.');
+        closeShareModal();
+        return;
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+        break;
+      case 'telegram':
+        url = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
+        break;
+      case 'linkedin':
+        url = `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`;
+        break;
+      case 'copy':
+        copyToClipboard(decodeURIComponent(shareUrl));
+        showCopyConfirm('✓ Link copied to clipboard!');
+        closeShareModal();
+        return;
+    }
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    closeShareModal();
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+    } else { fallbackCopy(text); }
+  }
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  function showCopyConfirm(msg) {
+    const el = document.getElementById('copy-confirm');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+
+  // ---- COPY LINK (legacy, kept for safety) ----
+  function copyLink() { openShareModal(); }
+
+  // ---- TEASER PREVIEW (blurred chart after step 3) ----
+  function renderTeaser() {
+    const form = document.getElementById('main-form');
+    const realVals = DIMS.map(d => parseInt(form.querySelector('[name="'+d.realKey+'"]').value) || 5);
+    const idealVals = DIMS.map(d => parseInt(form.querySelector('[name="'+d.idealKey+'"]').value) || 5);
+
+    const container = document.getElementById('teaser-bars');
+    container.innerHTML = DIMS.map((d, i) => {
+      const rH = Math.round((realVals[i] / 10) * 60);
+      const iH = Math.round((idealVals[i] / 10) * 60);
+      return `<div class="teaser-bar">
+        <div style="display:flex;gap:3px;align-items:flex-end;">
+          <div class="teaser-bar-fill" style="height:${rH}px;background:rgba(200,169,110,0.7);"></div>
+          <div class="teaser-bar-fill" style="height:${iH}px;background:rgba(184,92,56,0.7);"></div>
+        </div>
+        <div class="teaser-bar-label">${d.icon}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('preview-teaser').classList.add('visible');
+  }
+
+  // ============================================================
+  //  INSIGHT REPORT
+  // ============================================================
+
+  const DIMS = [
+    { label:'Career & Growth',     icon:'💼', realKey:'entry.1005924975', idealKey:'entry.2062162192' },
+    { label:'Financial Security',  icon:'💰', realKey:'entry.2043169134', idealKey:'entry.1242943320' },
+    { label:'Physical Health',     icon:'🏃', realKey:'entry.1515838282', idealKey:'entry.1889314008' },
+    { label:'Mental Wellbeing',    icon:'🧠', realKey:'entry.174494248',  idealKey:'entry.2141006275' },
+    { label:'Relationships',       icon:'❤️', realKey:'entry.1116749013', idealKey:'entry.1720398854' },
+    { label:'Skills & Knowledge',  icon:'📚', realKey:'entry.2011222242', idealKey:'entry.56652701'   },
+    { label:'Purpose & Meaning',   icon:'🌟', realKey:'entry.588465121',  idealKey:'entry.413681691'  },
+    { label:'Self-Confidence',     icon:'🪞', realKey:'entry.225113910',  idealKey:'entry.448467461'  },
+  ];
+
+  function collectData() {
+    const form = document.getElementById('main-form');
+    const name = document.getElementById('field-fullname').value.trim();
+    const firstName = name.split(' ')[0] || 'Friend';
+
+    const real  = DIMS.map(d => parseInt(form.querySelector('[name="'+d.realKey+'"]').value) || 5);
+    const ideal = DIMS.map(d => parseInt(form.querySelector('[name="'+d.idealKey+'"]').value) || 5);
+    const gaps  = DIMS.map((d,i) => Math.max(0, ideal[i] - real[i]));
+
+    const avgReal  = (real.reduce((a,b)=>a+b,0)/real.length).toFixed(1);
+    const avgIdeal = (ideal.reduce((a,b)=>a+b,0)/ideal.length).toFixed(1);
+    const avgGap   = (gaps.reduce((a,b)=>a+b,0)/gaps.length).toFixed(1);
+
+    const biggestGapIdx = gaps.indexOf(Math.max(...gaps));
+    const biggestGapArea = DIMS[biggestGapIdx];
+
+    const emotion = (document.querySelector('input[name="entry.1157105551"]:checked') || {}).value || '';
+    const selfPickedGap = (document.querySelector('input[name="entry.1537424180"]:checked') || {}).value || '';
+
+    // Sort dims by gap descending for ranked bars
+    const ranked = DIMS.map((d,i) => ({ ...d, real: real[i], ideal: ideal[i], gap: gaps[i] }))
+                       .sort((a,b) => b.gap - a.gap);
+
+    return { name, firstName, real, ideal, gaps, avgReal, avgIdeal, avgGap,
+             biggestGapArea, biggestGapIdx, ranked, emotion, selfPickedGap };
+  }
+
+  function getArchetype(avgGap, emotion) {
+    const g = parseFloat(avgGap);
+    const em = emotion.toLowerCase();
+    if (g <= 1.5) return { emoji:'🌿', name:'The Aligned One',        desc:'You live remarkably close to your ideal. Your real and ideal selves are nearly in harmony — a rare, hard-earned state. Your work now is to maintain this alignment as life evolves and new aspirations emerge.' };
+    if (g <= 3 && (em.includes('motivated') || em.includes('hopeful'))) return { emoji:'✨', name:'The Established Refiner', desc:'You\u2019ve built a solid foundation and still see room to grow \u2014 which is exactly the right balance. You\u2019re not chasing drastic change; you\u2019re polishing an already strong self into something even finer.' };
+    if (g <= 3) return { emoji:'🏗️', name:'The Patient Builder',      desc:'You have clear aspirations and a measured, steady approach to reaching them. You understand that meaningful growth takes time. Every small, consistent action you take compounds into transformation.' };
+    if (g <= 5 && (em.includes('anxious') || em.includes('overwhelmed') || em.includes('frustrated'))) return { emoji:'🌊', name:'The Overwhelmed Striver', desc:'You can clearly see who you want to be \u2014 and that gap feels heavy right now. That awareness is actually a gift, not a burden. The key is not to close everything at once, but to pick one gap, take one step, and let momentum build.' };
+    if (g <= 5) return { emoji:'🚀', name:'The Ambitious Dreamer',    desc:'You have a powerful vision of your ideal self and the drive to reach it. The gap between where you are and where you want to be is real but absolutely conquerable. You are already in motion \u2014 keep building on that energy.' };
+    return { emoji:'🌱', name:'The Awakening Soul', desc:'You are at the beginning of a profound journey of self-discovery. The wide gap between your real and ideal self is not a sign of failure \u2014 it is the raw material of transformation. Many who have changed their lives the most started exactly where you are right now.' };
+  }
+
+  function getActionSteps(ranked) {
+    const actions = {
+      'Career & Growth':    { title:'Design your next career move', desc:'Write a 3-month career action plan today. Identify one skill gap, one mentor to reach out to, and one project to take on that stretches you beyond your current comfort level.' },
+      'Financial Security': { title:'Build a simple money system',  desc:'Open a spreadsheet and track every rupee for 30 days. Knowledge is the first step. Then set up even \u20B9500/month auto-saving \u2014 the habit matters more than the amount.' },
+      'Physical Health':    { title:'Start with 20 minutes a day',  desc:'Do not overhaul your entire lifestyle \u2014 start by committing to just 20 minutes of movement every day for 21 days. Walk, stretch, or workout. Consistency before intensity.' },
+      'Mental Wellbeing':   { title:'Create a daily decompression ritual', desc:'Spend 10 minutes each night doing something purely restorative \u2014 journaling, breathing, music, no screens. Protect this time aggressively. Small mental hygiene habits prevent large mental health issues.' },
+      'Relationships':      { title:'Make one meaningful connection this week', desc:'Send a heartfelt message to someone you have drifted from. Or have one vulnerable conversation you have been avoiding. Deep relationships are built in small, honest moments.' },
+      'Skills & Knowledge': { title:'Commit to the 30-minute rule',  desc:'Block 30 minutes every day for deliberate skill-building. No distractions. Whether it is reading, practicing, or building \u2014 30 focused minutes daily compounds into mastery over months.' },
+      'Purpose & Meaning':  { title:'Journal your "why" this weekend', desc:'Ask yourself: what would you do if money and status did not matter? Write for 20 minutes without judgment. Purpose is not found \u2014 it is built through honest reflection and courageous action.' },
+      'Self-Confidence':    { title:'Do one uncomfortable thing daily', desc:'Confidence is built by evidence. Each day, do something that slightly scares you \u2014 speak up in a meeting, share an opinion, approach someone new. Log it. Watch your confidence bank grow.' },
+    };
+    return ranked.slice(0,3).map(d => actions[d.label] || { title: 'Work on '+d.label, desc: 'Set a clear 30-day goal for this area and review it weekly.' });
+  }
+
+  let radarChartInstance = null;
+
+  function openReport() {
+    const data = collectData();
+    const arch = getArchetype(data.avgGap, data.emotion);
+    const actions = getActionSteps(data.ranked);
+
+    // Update name tag in hero
+    document.getElementById('r-name-tag').textContent = '✦ Prepared for ' + data.name;
+
+    // Build HTML
+    let html = '';
+
+    // ① Scorecards
+    html += `<div class="r-sec-title">◈ Your Scores at a Glance</div>`;
+    html += `<div class="scorecard-grid">
+      <div class="scorecard"><span class="sc-icon">🌟</span><div class="sc-val gold">${data.avgReal}</div><div class="sc-label">Real Self Score</div></div>
+      <div class="scorecard"><span class="sc-icon">🎯</span><div class="sc-val rust">${data.avgIdeal}</div><div class="sc-label">Ideal Self Score</div></div>
+      <div class="scorecard"><span class="sc-icon">📏</span><div class="sc-val ${parseFloat(data.avgGap)>=5?'red':''}">${data.avgGap}</div><div class="sc-label">Avg Gap to Close</div></div>
+      <div class="scorecard"><span class="sc-icon">${data.biggestGapArea.icon}</span><div class="sc-val" style="font-size:clamp(0.9rem,3vw,1.1rem);padding-top:6px;">${data.biggestGapArea.label}</div><div class="sc-label">Biggest Gap Area</div></div>
+    </div>`;
+
+    // ② Radar Chart
+    html += `<div class="r-sec-title">◈ Radar — Real vs Ideal Self</div>`;
+    html += `<div class="radar-wrap"><canvas id="radarCanvas" width="420" height="420" style="max-width:100%;max-height:420px;"></canvas></div>`;
+
+    // ③ Gap Bars
+    html += `<div class="r-sec-title">◈ Gap by Dimension</div>`;
+    html += `<div class="gap-bars-wrap" id="gap-bars-container">`;
+    data.ranked.forEach(d => {
+      const gap = d.gap;
+      const pct = Math.round((gap/9)*100);
+      const cls = gap <= 2 ? 'green' : gap <= 4 ? 'amber' : 'red';
+      html += `<div class="gap-bar-row">
+        <div class="gb-label">${d.icon} ${d.label.split(' ')[0]}</div>
+        <div class="gb-track"><div class="gb-fill ${cls}" style="width:0%" data-pct="${pct}"></div></div>
+        <div class="gb-scores">${d.real} → ${d.ideal} &nbsp;<span style="color:${cls==='green'?'#4a7c59':cls==='amber'?'#b8860b':'#b53a2f'};font-weight:700;">(+${gap})</span></div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    // ④ Archetype
+    html += `<div class="r-sec-title">◈ Your Self-Gap Archetype</div>`;
+    html += `<div class="archetype-card">
+      <span class="arch-emoji">${arch.emoji}</span>
+      <div class="arch-name">${arch.name}</div>
+      <p class="arch-desc">${arch.desc}</p>
+    </div>`;
+
+    // ⑤ Priority & Strength cards
+    const top3 = data.ranked.slice(0,3);
+    const bot3 = [...data.ranked].sort((a,b)=>a.gap-b.gap).slice(0,3);
+    html += `<div class="r-sec-title">◈ Your Priorities & Strengths</div>`;
+    html += `<div class="two-col">
+      <div class="ps-card priority">
+        <div class="ps-card-title">🔴 Top Priorities</div>
+        ${top3.map(d=>`<div class="ps-item"><div class="ps-dot"></div>${d.icon} ${d.label}</div>`).join('')}
+      </div>
+      <div class="ps-card strength">
+        <div class="ps-card-title">🟢 Your Strengths</div>
+        ${bot3.map(d=>`<div class="ps-item"><div class="ps-dot"></div>${d.icon} ${d.label}</div>`).join('')}
+      </div>
+    </div>`;
+
+    // ⑥ Action Steps
+    html += `<div class="r-sec-title">◈ 3 Personalised Action Steps</div>`;
+    html += `<div class="actions-wrap">`;
+    actions.forEach((a, i) => {
+      html += `<div class="action-card">
+        <div class="action-num">${i+1}</div>
+        <div class="action-text"><h5>${a.title}</h5><p>${a.desc}</p></div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    // ⑦ Personal message
+    html += `<div class="personal-msg">
+      <div class="personal-msg-name">A personal word for you, ${data.firstName} \u2014</div>
+      <p>Looking at your report right now, I want you to know something important: <strong>no gap is impossible to improve.</strong> Every number you see here is not a verdict \u2014 it is a starting point. The distance between your real self and your ideal self is not a measure of your worth. It is simply the map of your growth.</p>
+      <p>You had the self-awareness to sit down, reflect honestly, and face yourself \u2014 that alone puts you ahead of most people. <strong>That takes courage, ${data.firstName}.</strong></p>
+      <p>Progress does not always look dramatic. Sometimes it looks like sleeping on time, saying no to one bad habit, reaching out to one person, or simply deciding that today you will try. <strong>Those small choices, made consistently, are what close the gap.</strong> I have seen it. I believe it for you too.</p>
+      <p>And whenever you feel low, whenever the gap feels overwhelming, whenever you feel like giving up \u2014 please remember: <strong>the low feeling is not permanent. It always passes.</strong></p>
+      <div class="crisis-line"><strong>Suicide is never the answer.</strong> I have lost a dear friend to it and I could not bear to lose another. If you ever feel like things are too much \u2014 please, talk to someone. You can always talk to me. I am here. You are not alone. Every single gap in this report is improvable. Every single one. You are worth the effort it takes to get there.</div>
+    </div>`;
+
+    // Closing quote
+    html += `<div class="closing-block">
+      <blockquote>"No medicine can cure a negative mind, and no poison can kill a positive one."</blockquote>
+      <div class="closing-signoff">With belief in you — always,</div>
+      <div class="closing-author">Sankalp Jaiswal</div>
+    </div>`;
+
+    html += `<button class="btn-print-report" onclick="printReport()">⬇ Save as PDF / Print Report</button>`;
+    html += `<button class="btn-close-report" onclick="closeReport()">Close Report ✕</button>`;
+
+    document.getElementById('r-body').innerHTML = html;
+
+    // Show overlay
+    const overlay = document.getElementById('report-overlay');
+    overlay.classList.add('open');
+    overlay.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+
+    // Animate gap bars
+    setTimeout(() => {
+      document.querySelectorAll('.gb-fill[data-pct]').forEach(el => {
+        el.style.width = el.dataset.pct + '%';
+      });
+    }, 200);
+
+    // Draw radar chart
+    setTimeout(() => {
+      const ctx = document.getElementById('radarCanvas');
+      if (!ctx) return;
+      if (radarChartInstance) { radarChartInstance.destroy(); }
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: DIMS.map(d => d.label.split(' ')[0]),
+          datasets: [
+            {
+              label: 'Real Self',
+              data: data.real,
+              backgroundColor: 'rgba(200,169,110,0.18)',
+              borderColor: 'rgba(200,169,110,0.9)',
+              pointBackgroundColor: 'rgba(200,169,110,1)',
+              pointRadius: 4,
+              borderWidth: 2,
+            },
+            {
+              label: 'Ideal Self',
+              data: data.ideal,
+              backgroundColor: 'rgba(184,92,56,0.12)',
+              borderColor: 'rgba(184,92,56,0.9)',
+              pointBackgroundColor: 'rgba(184,92,56,1)',
+              pointRadius: 4,
+              borderWidth: 2,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              min: 0, max: 10,
+              ticks: { stepSize: 2, font: { size: 10 }, color: '#888' },
+              grid: { color: 'rgba(0,0,0,0.08)' },
+              pointLabels: { font: { size: 11, family: "'DM Mono', monospace" }, color: '#2d1f14' },
+              angleLines: { color: 'rgba(0,0,0,0.08)' },
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { size: 11, family: "'DM Mono', monospace" }, padding: 16 }
+            }
+          }
+        }
+      });
+    }, 300);
+  }
+
+  function closeReport() {
+    const overlay = document.getElementById('report-overlay');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
 </script>
+
 </body>
 </html>
