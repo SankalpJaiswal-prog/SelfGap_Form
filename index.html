@@ -11,8 +11,11 @@
 <meta name="twitter:title" content="Real Self vs Ideal Self — Discover Your Gap">
 <meta name="twitter:description" content="A reflective 5-minute survey by Sankalp Jaiswal">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 <style>
   :root {
     --ink: #1a1410;
@@ -468,6 +471,49 @@
   /* Report body */
   .r-body { padding: clamp(24px,5vw,40px) clamp(16px,4vw,36px); }
 
+  /* ---- Insight Banner (top of report) ---- */
+  .insight-banner {
+    background: linear-gradient(135deg, var(--deep) 0%, #1a0f0a 100%);
+    border: 1px solid rgba(200,169,110,0.25);
+    border-left: 4px solid var(--warm);
+    padding: clamp(18px,4vw,28px) clamp(16px,4vw,28px);
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .insight-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(200,169,110,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .insight-pct {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem,8vw,4rem);
+    font-weight: 600;
+    color: var(--glow);
+    line-height: 1;
+    display: block;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .insight-pct sup {
+    font-size: 0.45em;
+    vertical-align: super;
+    color: var(--warm);
+    font-weight: 300;
+  }
+  .insight-sentence {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.05rem,3.5vw,1.3rem);
+    font-weight: 300;
+    color: rgba(232,201,122,0.88);
+    line-height: 1.55;
+    position: relative;
+  }
+  .insight-sentence strong { color: var(--glow); font-weight: 600; }
+  .insight-sentence em { color: var(--warm); font-style: italic; }
+
   /* Section title */
   .r-sec-title {
     font-family: 'Cormorant Garamond', serif;
@@ -557,7 +603,7 @@
     font-size: 10px;
     font-family: 'DM Mono', monospace;
     color: var(--sage);
-    width: 68px;
+    width: 120px;
     text-align: right;
     flex-shrink: 0;
     white-space: nowrap;
@@ -595,6 +641,18 @@
     margin: 0 auto;
     position: relative;
   }
+  .arch-focus {
+    font-size: clamp(12px,3vw,13.5px);
+    color: rgba(232,201,122,0.92);
+    line-height: 1.8;
+    max-width: 520px;
+    margin: 16px auto 0;
+    padding-top: 14px;
+    border-top: 1px solid rgba(200,169,110,0.2);
+    position: relative;
+  }
+  .arch-focus strong { color: var(--glow); }
+  .arch-focus em { color: var(--warm); font-style: italic; }
 
   /* Priority & Strength cards */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
@@ -725,6 +783,55 @@
   }
   .closing-signoff { font-size: 11px; color: rgba(200,169,110,0.45); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-family: 'DM Mono', monospace; }
   .closing-author { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--glow); font-weight: 400; }
+
+  /* ===================== DEEPER PSYCHOLOGY SECTION ===================== */
+  .deeper-psych-wrap { margin-bottom: 32px; }
+  .deeper-psych-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .dp-card {
+    background: var(--white);
+    border: 1px solid var(--mist);
+    padding: clamp(18px,4vw,26px) clamp(16px,4vw,24px);
+    position: relative;
+    overflow: hidden;
+  }
+  .dp-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+  }
+  .dp-card.blocker::before { background: #b53a2f; }
+  .dp-card.shadow::before  { background: #4a7c59; }
+  .dp-card.conflict::before { background: #b8860b; }
+  .dp-card-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .dp-card-icon { font-size: 20px; flex-shrink: 0; }
+  .dp-card-type {
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .dp-card.blocker .dp-card-type { color: #b53a2f; }
+  .dp-card.shadow  .dp-card-type { color: #4a7c59; }
+  .dp-card.conflict .dp-card-type { color: #b8860b; }
+  .dp-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem,3vw,1.2rem);
+    color: var(--deep);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .dp-card-body {
+    font-size: clamp(11.5px,3vw,13px);
+    color: #4a3828;
+    line-height: 1.9;
+    font-family: 'DM Mono', monospace;
+  }
 
   /* Report close button at bottom */
   .btn-close-report {
@@ -901,6 +1008,10 @@
     /* Action cards: each stays whole */
     .actions-wrap { page-break-inside: avoid; break-inside: avoid; }
     .action-card  { page-break-inside: avoid; break-inside: avoid; }
+
+    /* Deeper psychology: keep each card together */
+    .deeper-psych-wrap { page-break-inside: avoid; break-inside: avoid; }
+    .dp-card { page-break-inside: avoid; break-inside: avoid; }
 
     /* Personal message: avoid splitting */
     .personal-msg {
@@ -1701,25 +1812,90 @@
     const g = parseFloat(avgGap);
     const em = emotion.toLowerCase();
     if (g <= 1.5) return { emoji:'🌿', name:'The Aligned One',        desc:'You live remarkably close to your ideal. Your real and ideal selves are nearly in harmony — a rare, hard-earned state. Your work now is to maintain this alignment as life evolves and new aspirations emerge.' };
-    if (g <= 3 && (em.includes('motivated') || em.includes('hopeful'))) return { emoji:'✨', name:'The Established Refiner', desc:'You\u2019ve built a solid foundation and still see room to grow \u2014 which is exactly the right balance. You\u2019re not chasing drastic change; you\u2019re polishing an already strong self into something even finer.' };
+    if (g <= 3 && (em.includes('motivated') || em.includes('hopeful'))) return { emoji:'✨', name:'The Established Refiner', desc:'You\u2019ve built a solid foundation and still see room to grow which is exactly the right balance. You\u2019re not chasing drastic change; you\u2019re polishing an already strong self into something even finer.' };
     if (g <= 3) return { emoji:'🏗️', name:'The Patient Builder',      desc:'You have clear aspirations and a measured, steady approach to reaching them. You understand that meaningful growth takes time. Every small, consistent action you take compounds into transformation.' };
-    if (g <= 5 && (em.includes('anxious') || em.includes('overwhelmed') || em.includes('frustrated'))) return { emoji:'🌊', name:'The Overwhelmed Striver', desc:'You can clearly see who you want to be \u2014 and that gap feels heavy right now. That awareness is actually a gift, not a burden. The key is not to close everything at once, but to pick one gap, take one step, and let momentum build.' };
-    if (g <= 5) return { emoji:'🚀', name:'The Ambitious Dreamer',    desc:'You have a powerful vision of your ideal self and the drive to reach it. The gap between where you are and where you want to be is real but absolutely conquerable. You are already in motion \u2014 keep building on that energy.' };
-    return { emoji:'🌱', name:'The Awakening Soul', desc:'You are at the beginning of a profound journey of self-discovery. The wide gap between your real and ideal self is not a sign of failure \u2014 it is the raw material of transformation. Many who have changed their lives the most started exactly where you are right now.' };
+    if (g <= 5 && (em.includes('anxious') || em.includes('overwhelmed') || em.includes('frustrated'))) return { emoji:'🌊', name:'The Overwhelmed Striver', desc:'You can clearly see who you want to be and that gap feels heavy right now. That awareness is actually a gift, not a burden. The key is not to close everything at once, but to pick one gap, take one step, and let momentum build.' };
+    if (g <= 5) return { emoji:'🚀', name:'The Ambitious Dreamer',    desc:'You have a powerful vision of your ideal self and the drive to reach it. The gap between where you are and where you want to be is real but absolutely conquerable. You are already in motion keep building on that energy.' };
+    return { emoji:'🌱', name:'The Awakening Soul', desc:'You are at the beginning of a profound journey of self-discovery. The wide gap between your real and ideal self is not a sign of failure it is the raw material of transformation. Many who have changed their lives the most started exactly where you are right now.' };
   }
 
   function getActionSteps(ranked) {
     const actions = {
       'Career & Growth':    { title:'Design your next career move', desc:'Write a 3-month career action plan today. Identify one skill gap, one mentor to reach out to, and one project to take on that stretches you beyond your current comfort level.' },
-      'Financial Security': { title:'Build a simple money system',  desc:'Open a spreadsheet and track every rupee for 30 days. Knowledge is the first step. Then set up even \u20B9500/month auto-saving \u2014 the habit matters more than the amount.' },
-      'Physical Health':    { title:'Start with 20 minutes a day',  desc:'Do not overhaul your entire lifestyle \u2014 start by committing to just 20 minutes of movement every day for 21 days. Walk, stretch, or workout. Consistency before intensity.' },
-      'Mental Wellbeing':   { title:'Create a daily decompression ritual', desc:'Spend 10 minutes each night doing something purely restorative \u2014 journaling, breathing, music, no screens. Protect this time aggressively. Small mental hygiene habits prevent large mental health issues.' },
+      'Financial Security': { title:'Build a simple money system',  desc:'Open a spreadsheet and track every rupee for 30 days. Knowledge is the first step. Then set up even \u20B9500/month auto-saving the habit matters more than the amount.' },
+      'Physical Health':    { title:'Start with 20 minutes a day',  desc:'Do not overhaul your entire lifestyle start by committing to just 20 minutes of movement every day for 21 days. Walk, stretch, or workout. Consistency before intensity.' },
+      'Mental Wellbeing':   { title:'Create a daily decompression ritual', desc:'Spend 10 minutes each night doing something purely restorative including journaling, breathing, music, no screens. Protect this time aggressively. Small mental hygiene habits prevent large mental health issues.' },
       'Relationships':      { title:'Make one meaningful connection this week', desc:'Send a heartfelt message to someone you have drifted from. Or have one vulnerable conversation you have been avoiding. Deep relationships are built in small, honest moments.' },
-      'Skills & Knowledge': { title:'Commit to the 30-minute rule',  desc:'Block 30 minutes every day for deliberate skill-building. No distractions. Whether it is reading, practicing, or building \u2014 30 focused minutes daily compounds into mastery over months.' },
-      'Purpose & Meaning':  { title:'Journal your "why" this weekend', desc:'Ask yourself: what would you do if money and status did not matter? Write for 20 minutes without judgment. Purpose is not found \u2014 it is built through honest reflection and courageous action.' },
-      'Self-Confidence':    { title:'Do one uncomfortable thing daily', desc:'Confidence is built by evidence. Each day, do something that slightly scares you \u2014 speak up in a meeting, share an opinion, approach someone new. Log it. Watch your confidence bank grow.' },
+      'Skills & Knowledge': { title:'Commit to the 30-minute rule',  desc:'Block 30 minutes every day for deliberate skill-building. No distractions. Whether it is reading, practicing, or building and 30 focused minutes daily compounds into mastery over months.' },
+      'Purpose & Meaning':  { title:'Journal your "why" this weekend', desc:'Ask yourself: what would you do if money and status did not matter? Write for 20 minutes without judgment. Purpose is not found it is built through honest reflection and courageous action.' },
+      'Self-Confidence':    { title:'Do one uncomfortable thing daily', desc:'Confidence is built by evidence. Each day, do something that slightly scares you like speaking up in a meeting, share an opinion, approach someone new. Log it. Watch your confidence bank grow.' },
     };
     return ranked.slice(0,3).map(d => actions[d.label] || { title: 'Work on '+d.label, desc: 'Set a clear 30-day goal for this area and review it weekly.' });
+  }
+
+  function getDeeperPsychology(data) {
+    const reason = (document.querySelector('input[name="entry.16919863"]:checked') || {}).value || '';
+    const r = reason.toLowerCase();
+
+    // ---- Hidden Growth Blocker (based on Q21 reason) ----
+    let blocker = { title: 'Pattern Recognition', body: 'You know your gaps. The next step is understanding why they persist.' };
+    if (r.includes('fear')) {
+      blocker = { title: 'Fear of Failure', body: 'You may be protecting yourself from discomfort by staying in familiar territory. This is not weakness. But it does mean the gap stays wide until you decide that the discomfort of trying is smaller than the discomfort of staying the same.' };
+    } else if (r.includes('no clear plan') || r.includes('plan')) {
+      blocker = { title: 'Missing Direction, Not Effort', body: 'Your challenge may not be willpower or motivation. It may simply be the absence of a clear, step-by-step path. Once you have a concrete plan, the same effort that felt wasted will suddenly start producing results.' };
+    } else if (r.includes('motivation')) {
+      blocker = { title: 'Mood-Dependent Progress', body: 'You may be relying on feeling motivated before taking action. But motivation follows action, not the other way around. Building small systems that run regardless of how you feel will serve you far better than waiting for the "right" moment.' };
+    } else if (r.includes('time')) {
+      blocker = { title: 'Urgency Over Importance', body: 'Your schedule may be filled with what feels urgent rather than what is truly important. The gap is not closing because growth-focused time keeps getting displaced. Even 20 minutes of intentional daily focus, protected fiercely, adds up faster than you think.' };
+    } else if (r.includes('money') || r.includes('lack of money')) {
+      blocker = { title: 'Resource Constraints', body: 'External financial limits are real and valid. But some growth in your priority areas may be possible even within tight constraints. The key is identifying which next steps are actually free, low-cost, or knowledge-based rather than money-dependent.' };
+    } else if (r.includes('external') || r.includes('circumstances')) {
+      blocker = { title: 'Environment and Circumstances', body: 'You may feel the gap is largely outside your control right now. That perception is sometimes accurate. And sometimes, even within difficult circumstances, there is a small zone of action available. Finding that zone, however small, keeps momentum alive.' };
+    } else if (r.includes('working') || r.includes('actively')) {
+      blocker = { title: 'Already in Motion', body: 'You said you are actively working on this. That is genuinely the most important thing. Your growth blocker is not resistance but patience: the results of your current effort may not yet be visible. Stay consistent.' };
+    }
+
+    // ---- Shadow Strength (based on high real self scores) ----
+    const avgReal = data.real.reduce((a,b)=>a+b,0)/data.real.length;
+    const highReal = data.ranked.slice().sort((a,b) => b.real - a.real).slice(0, 2);
+    const lowReal  = data.ranked.slice().sort((a,b) => a.real - b.real).slice(0, 2);
+    let shadow = { title: 'Underestimated Capacity', body: 'Your scores suggest you have more inner resource than you may be giving yourself credit for.' };
+
+    const h0 = highReal[0].label;
+    const l0 = lowReal[0].label;
+    if (h0.includes('Skills') && l0.includes('Self-Confidence')) {
+      shadow = { title: 'Capability Without Belief', body: 'You have built real skill and knowledge. Your shadow strength is that you are likely more capable than you currently believe. The gap is not in your ability. It is in how much credit you give yourself for what you have already built.' };
+    } else if (h0.includes('Mental') && l0.includes('Relationships')) {
+      shadow = { title: 'Quiet Resilience', body: 'Your mental wellbeing score suggests strong emotional self-regulation. That inner stability is a shadow strength: even when relationships feel distant, you have the resilience to handle it without falling apart. That is rarer than it looks.' };
+    } else if (h0.includes('Purpose') && l0.includes('Career')) {
+      shadow = { title: 'Inner Compass Before Outer Success', body: 'You have a clear sense of why, even when the how is still catching up. Knowing your purpose before having the external success to show for it is actually a strength. Many people achieve outwardly without ever knowing what they are achieving for.' };
+    } else if (h0.includes('Self-Confidence') && (l0.includes('Financial') || l0.includes('Career'))) {
+      shadow = { title: 'Belief During Instability', body: 'You carry self-confidence even through phases where external results are not yet matching your potential. That is one of the rarest and most useful qualities a person can have. It will serve you once the other pieces catch up.' };
+    } else if (highReal[0].real >= 7) {
+      shadow = { title: 'A Strong Foundation Already Exists', body: `Your ${h0} score is genuinely high. That strength is not just nice to have. It is the platform everything else can be built on. People often overlook what is already working because they are too focused on the gaps. Your ${h0} is real, earned, and worth protecting.` };
+    }
+
+    // ---- Inner Conflict (based on largest gap) ----
+    const bigDim = data.ranked[0];
+    let conflict = { title: 'Values and Reality Are Still Aligning', body: 'There is a gap between what you deeply want and where you currently are. That tension is not dysfunction. It is the engine of growth.' };
+
+    if (bigDim.label.includes('Physical') && bigDim.ideal >= 8) {
+      conflict = { title: 'You Value Discipline, But Habits Are Not There Yet', body: 'You rated your ideal physical health very high. That tells you this matters deeply to you as a value. The conflict is that your daily habits have not yet caught up with that value. Closing this gap is less about willpower and more about designing an environment where healthy choices become the default.' };
+    } else if (bigDim.label.includes('Relationships') && bigDim.ideal >= 8) {
+      conflict = { title: 'You Want Closeness, But Connection Feels Difficult', body: 'You want rich, meaningful relationships. The conflict may be that closeness requires vulnerability or consistent effort that currently feels risky or exhausting. This is a sign of care, not a flaw. Small, consistent acts of openness tend to gradually reduce this tension.' };
+    } else if (bigDim.label.includes('Purpose') && bigDim.real <= 6) {
+      conflict = { title: 'You Know You Want More, But Direction Is Unclear', body: 'You sense there is more meaning available for your life. The inner conflict is that you may be able to feel that pull without yet knowing exactly where it leads. That discomfort is actually productive. It means your sense of purpose is alive and asking to be developed.' };
+    } else if (bigDim.label.includes('Skills') && bigDim.label.includes('Career')) {
+      conflict = { title: 'Private Development vs Public Visibility', body: 'You may be doing the internal work of building skills while still wanting the external recognition of career success. These two are not always in sync. Often, the private work accumulates quietly until a threshold is crossed and external progress becomes visible suddenly.' };
+    } else if (bigDim.label.includes('Financial') && bigDim.ideal >= 8) {
+      conflict = { title: 'High Aspiration, Uncertain Path', body: 'You deeply want financial security. The conflict is that financial gaps can feel uniquely stressful because they touch so many other areas of life. The key insight is that financial progress follows a system, not a feeling. Building even a small, consistent habit around money tends to reduce anxiety faster than any single large change.' };
+    } else if (bigDim.label.includes('Self-Confidence') && bigDim.ideal >= 8) {
+      conflict = { title: 'The Gap Between Who You Are and Who You Feel You Are', body: 'You want to feel more confident than you currently do. That gap is often not about actual ability. It is about how much internal permission you give yourself to trust your own judgments. Each time you act despite doubt, you deposit into your confidence account. The account builds slowly, then suddenly.' };
+    } else {
+      conflict = { title: `${bigDim.label}: Value and Reality Are Out of Step`, body: `You rated your ideal ${bigDim.label} at ${bigDim.ideal} but your current reality at ${bigDim.real}. That gap tells you something important: this area genuinely matters to you. The tension you feel is not a problem. It is your values asking to be expressed more fully in your daily life.` };
+    }
+
+    return { blocker, shadow, conflict };
   }
 
   let radarChartInstance = null;
@@ -1734,6 +1910,23 @@
 
     // Build HTML
     let html = '';
+
+    // ⓪ Personalised insight banner
+    const pctLived = Math.round((parseFloat(data.avgReal) / parseFloat(data.avgIdeal)) * 100);
+    const gapCount = data.gaps.filter(g => g > 0).length;
+    let insightLine = '';
+    if (gapCount === 0) {
+      insightLine = `<strong>${data.firstName}, you're already living your ideal self.</strong> Every dimension matches your vision. Your work now is to keep it that way.`;
+    } else if (gapCount === 1) {
+      insightLine = `<strong>${data.firstName}, you've built roughly ${pctLived}% of the life you envision.</strong> Your one area to focus on right now is <em>${data.biggestGapArea.label}</em>.`;
+    } else {
+      const top2 = data.ranked.slice(0,2).map(d => d.label).join(' and ');
+      insightLine = `<strong>${data.firstName}, you've built roughly ${pctLived}% of the life you envision.</strong> Your biggest unfinished chapters are <em>${top2}</em>. The rest of your foundation looks strong.`;
+    }
+    html += `<div class="insight-banner">
+      <span class="insight-pct">${pctLived}<sup>%</sup></span>
+      <div class="insight-sentence">${insightLine}</div>
+    </div>`;
 
     // ① Scorecards
     html += `<div class="r-sec-title">◈ Your Scores at a Glance</div>`;
@@ -1753,22 +1946,30 @@
     html += `<div class="gap-bars-wrap" id="gap-bars-container">`;
     data.ranked.forEach(d => {
       const gap = d.gap;
+      const rawGap = d.ideal - d.real; // can be negative (real > ideal)
       const pct = Math.round((gap/9)*100);
       const cls = gap <= 2 ? 'green' : gap <= 4 ? 'amber' : 'red';
+      const gapLabel = gap === 0
+        ? `<span style="color:#4a7c59;font-weight:700;">✓ Already there</span>`
+        : `<span style="color:${cls==='green'?'#4a7c59':cls==='amber'?'#b8860b':'#b53a2f'};font-weight:700;">(+${gap})</span>`;
       html += `<div class="gap-bar-row">
         <div class="gb-label">${d.icon} ${d.label.split(' ')[0]}</div>
-        <div class="gb-track"><div class="gb-fill ${cls}" style="width:0%" data-pct="${pct}"></div></div>
-        <div class="gb-scores">${d.real} → ${d.ideal} &nbsp;<span style="color:${cls==='green'?'#4a7c59':cls==='amber'?'#b8860b':'#b53a2f'};font-weight:700;">(+${gap})</span></div>
+        <div class="gb-track"><div class="gb-fill ${gap===0?'green':cls}" style="width:0%" data-pct="${gap===0?8:pct}"></div></div>
+        <div class="gb-scores">${d.real} → ${d.ideal} &nbsp;${gapLabel}</div>
       </div>`;
     });
     html += `</div>`;
 
     // ④ Archetype
     html += `<div class="r-sec-title">◈ Your Self-Gap Archetype</div>`;
+    const focusLine = data.biggestGapArea
+      ? `<p class="arch-focus"><strong>Your one focus:</strong> Pour your energy into <em>${data.biggestGapArea.label}</em> before spreading yourself thin. Improving this area could positively influence many others. That single chapter, worked on consistently, may become a real leverage point for your growth.</p>`
+      : '';
     html += `<div class="archetype-card">
       <span class="arch-emoji">${arch.emoji}</span>
       <div class="arch-name">${arch.name}</div>
       <p class="arch-desc">${arch.desc}</p>
+      ${focusLine}
     </div>`;
 
     // ⑤ Priority & Strength cards
@@ -1797,20 +1998,50 @@
     });
     html += `</div>`;
 
-    // ⑦ Personal message
+    // ⑦ Deeper Psychology
+    const psych = getDeeperPsychology(data);
+    html += `<div class="r-sec-title">◈ Your Deeper Psychology</div>`;
+    html += `<div class="deeper-psych-wrap"><div class="deeper-psych-grid">
+      <div class="dp-card blocker">
+        <div class="dp-card-header">
+          <span class="dp-card-icon">🔍</span>
+          <span class="dp-card-type">Hidden Growth Blocker</span>
+        </div>
+        <div class="dp-card-title">${psych.blocker.title}</div>
+        <div class="dp-card-body">${psych.blocker.body}</div>
+      </div>
+      <div class="dp-card shadow">
+        <div class="dp-card-header">
+          <span class="dp-card-icon">✦</span>
+          <span class="dp-card-type">Shadow Strength</span>
+        </div>
+        <div class="dp-card-title">${psych.shadow.title}</div>
+        <div class="dp-card-body">${psych.shadow.body}</div>
+      </div>
+      <div class="dp-card conflict">
+        <div class="dp-card-header">
+          <span class="dp-card-icon">⚖</span>
+          <span class="dp-card-type">Inner Conflict</span>
+        </div>
+        <div class="dp-card-title">${psych.conflict.title}</div>
+        <div class="dp-card-body">${psych.conflict.body}</div>
+      </div>
+    </div></div>`;
+
+    // ⑧ Personal message
     html += `<div class="personal-msg">
-      <div class="personal-msg-name">A personal word for you, ${data.firstName} \u2014</div>
-      <p>Looking at your report right now, I want you to know something important: <strong>no gap is impossible to improve.</strong> Every number you see here is not a verdict \u2014 it is a starting point. The distance between your real self and your ideal self is not a measure of your worth. It is simply the map of your growth.</p>
-      <p>You had the self-awareness to sit down, reflect honestly, and face yourself \u2014 that alone puts you ahead of most people. <strong>That takes courage, ${data.firstName}.</strong></p>
-      <p>Progress does not always look dramatic. Sometimes it looks like sleeping on time, saying no to one bad habit, reaching out to one person, or simply deciding that today you will try. <strong>Those small choices, made consistently, are what close the gap.</strong> I have seen it. I believe it for you too.</p>
-      <p>And whenever you feel low, whenever the gap feels overwhelming, whenever you feel like giving up \u2014 please remember: <strong>the low feeling is not permanent. It always passes.</strong></p>
-      <div class="crisis-line"><strong>Suicide is never the answer.</strong> I have lost a dear friend to it and I could not bear to lose another. If you ever feel like things are too much \u2014 please, talk to someone. You can always talk to me. I am here. You are not alone. Every single gap in this report is improvable. Every single one. You are worth the effort it takes to get there.</div>
+      <div class="personal-msg-name">A personal word for you, ${data.firstName}</div>
+      <p>Looking at your report right now, I want you to know something important: <strong>no gap is impossible to improve.</strong> Every number you see here is not a verdict. It is a starting point. The distance between your real self and your ideal self is not a measure of your worth. It is simply the map of your growth.</p>
+      <p>You had the self-awareness to sit down, reflect honestly, and face yourself. <strong>That already shows uncommon self-awareness, ${data.firstName}.</strong> Many people avoid this kind of reflection.</p>
+      <p>Progress does not always look dramatic. Sometimes it looks like sleeping on time, saying no to one bad habit, reaching out to one person, or simply deciding that today you will try. <strong>Those small choices, made consistently, are what close the gap.</strong> I believe it for you.</p>
+      <p>And whenever you feel low, whenever the gap feels overwhelming, whenever you feel like giving up, please remember: <strong>this low feeling is temporary. It always passes.</strong></p>
+      <div class="crisis-line">If life ever feels too heavy, please reach out to someone you trust. You do not have to carry it alone. Every single gap in this report is improvable. Every single one. You are worth the effort it takes to get there.</div>
     </div>`;
 
     // Closing quote
     html += `<div class="closing-block">
       <blockquote>"No medicine can cure a negative mind, and no poison can kill a positive one."</blockquote>
-      <div class="closing-signoff">With belief in you — always,</div>
+      <div class="closing-signoff">So always stay positive!</div>
       <div class="closing-author">Sankalp Jaiswal</div>
     </div>`;
 
