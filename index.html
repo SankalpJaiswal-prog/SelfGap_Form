@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Real Self vs Ideal Self — Sankalp Jaiswal</title>
+<title>Real Self vs Ideal Self — Sankalp Jaiswal v10</title>
 <meta property="og:title" content="Real Self vs Ideal Self — Discover Your Gap">
 <meta property="og:description" content="A reflective 5-minute survey by Sankalp Jaiswal">
 <meta property="og:type" content="website">
@@ -205,8 +205,10 @@
     .dim-slider {
       height: 6px;
       padding: 0;
-      margin: 10px 0;
-      touch-action: pan-x;
+      margin: 4px 0;
+      /* pan-y: vertical scrolling passes through to the page freely,
+         horizontal drag is owned by the slider — exactly like v4 */
+      touch-action: pan-y;
     }
     .dim-slider::-webkit-slider-runnable-track {
       height: 6px;
@@ -760,24 +762,109 @@
     line-height: 1.8;
   }
 
-  /* Closing quote */
+  /* Closing quote block */
   .closing-block {
     background: var(--deep);
-    padding: clamp(22px,5vw,36px) clamp(18px,4vw,32px);
+    padding: clamp(28px,6vw,44px) clamp(18px,4vw,36px);
     text-align: center;
     border: 1px solid rgba(200,169,110,0.18);
     margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
   }
-  .closing-block blockquote {
+  .closing-block::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(200,169,110,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .closing-quote-mark {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1rem,3.5vw,1.25rem);
-    font-style: italic;
-    color: var(--warm);
-    line-height: 1.8;
-    margin-bottom: 18px;
+    font-size: 5rem;
+    line-height: 0.6;
+    color: rgba(200,169,110,0.18);
+    margin-bottom: 12px;
+    display: block;
+    position: relative;
   }
-  .closing-signoff { font-size: 11px; color: rgba(200,169,110,0.45); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; font-family: 'DM Mono', monospace; }
-  .closing-author { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--glow); font-weight: 400; }
+  .closing-quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.05rem,3.8vw,1.35rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--glow);
+    line-height: 1.75;
+    margin-bottom: 14px;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+  .closing-attribution {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .closing-relevance {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(200,169,110,0.55);
+    line-height: 1.9;
+    max-width: 460px;
+    margin: 0 auto 22px;
+    text-align: left;
+    border-left: 2px solid rgba(200,169,110,0.2);
+    padding-left: 14px;
+    position: relative;
+  }
+  .closing-divider {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,169,110,0.35), transparent);
+    margin: 0 auto 16px;
+  }
+  .closing-author {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: rgba(200,169,110,0.5);
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    position: relative;
+  }
+
+  /* Priorities/Strengths overlap indicators */
+  .ps-dual-badge {
+    display: inline-block;
+    font-size: 9px;
+    color: var(--warm);
+    background: rgba(200,169,110,0.12);
+    border: 1px solid rgba(200,169,110,0.3);
+    border-radius: 2px;
+    padding: 1px 4px;
+    margin-left: 5px;
+    vertical-align: middle;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0;
+    line-height: 1.6;
+  }
+  .overlap-note {
+    background: rgba(200,169,110,0.08);
+    border: 1px solid rgba(200,169,110,0.22);
+    border-left: 3px solid var(--warm);
+    padding: 12px 16px;
+    margin-top: 12px;
+    margin-bottom: 24px;
+    font-size: 11.5px;
+    color: #6a4e2a;
+    line-height: 1.85;
+    font-family: 'DM Mono', monospace;
+  }
+  .overlap-note strong { color: var(--deep); }
 
   /* ===================== DEEPER PSYCHOLOGY SECTION ===================== */
   .deeper-psych-wrap { margin-bottom: 32px; }
@@ -846,15 +933,18 @@
   .btn-close-report:hover { border-color: var(--warm); color: var(--warm); }
 
   /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 768px) {
+    /* Keep row horizontal. Name is capped so slider always has room. */
+    .dim-row        { flex-wrap: nowrap; align-items: center; padding: 10px 12px; gap: 8px; }
+    .dim-name       { flex: 0 0 auto; max-width: 42%; min-width: 0; font-size: 0.85rem; }
+    .dim-name small { font-size: 8px; }
+    .dim-scale      { flex: 1 1 0; min-width: 0; }
+    .dim-scale-wrap { flex: 1 1 0; min-width: 0; }
+  }
   @media (max-width: 480px) {
-    .dim-scale { flex: 0 0 100%; }
-    .dim-row { padding: 12px 14px; }
     .nav-row { flex-direction: column-reverse; }
     .btn-next, .btn-back, .btn-submit { width: 100%; text-align: center; margin-left: 0; }
     .popup-thankyou { max-height: 85vh; padding: 24px 18px; }
-  }
-  @media (min-width: 481px) and (max-width: 768px) {
-    .dim-scale { flex: 0 0 180px; }
   }
 
   /* ===================== SHARE MODAL ===================== */
@@ -1026,6 +1116,70 @@
     /* Page margins */
     @page { margin: 1.4cm 1.2cm; size: A4; }
   }
+
+  /* ===== REAL-SELF GHOST MARKER ON IDEAL SLIDERS ===== */
+  .dim-scale-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 200px;
+    min-width: 150px;
+  }
+
+  /* Wrapper gives us a positioned context for the ghost tick */
+  .slider-track-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    padding-bottom: 18px; /* exactly enough for pin (8px) + label (10px) */
+  }
+  .slider-track-wrap .dim-slider {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    margin: 0; /* no extra vertical margin */
+  }
+
+  /* The ghost: a vertical tick + small label, absolutely placed on the track */
+  .ghost-marker {
+    position: absolute;
+    /* Sit just below the slider track (slider is ~6-8px tall, sits at top of track-wrap) */
+    top: 18px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .ghost-pin {
+    width: 2px;
+    height: 8px;
+    background: #5a7a6a;
+    opacity: 0.7;
+    border-radius: 1px;
+  }
+  .ghost-label {
+    font-size: 8px;
+    font-family: "DM Mono", monospace;
+    color: #5a7a6a;
+    white-space: nowrap;
+    background: rgba(245,240,232,0.97);
+    padding: 1px 4px;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+    border: 1px solid rgba(90,122,106,0.30);
+    margin-top: 1px;
+  }
+  @media (max-width: 768px) {
+    .ghost-label { font-size: 9px; }
+    .ghost-pin   { height: 8px; }
+    /* slider thumb is 28px tall with margin-top: -11px, so track center ~= top + 3px */
+    .ghost-marker { top: 16px; }
+  }
 </style>
 </head>
 <body>
@@ -1069,10 +1223,8 @@
     <div class="ty-divider"></div>
 
     <p>
-      Thank you so much for taking the time to fill this out it genuinely means a lot to me.
-      Just remember, change doesn’t happen instantly, and it’s okay to not have everything figured out.
-      We’re all learning, evolving, and figuring life out step by step.
-      Be kind to yourself through the process, and don’t forget how far you’ve already come.
+      Thank you so much for taking the time to fill this out—it truly means a lot to me. Remember, growth takes time, and it’s okay not to have everything figured out.
+      We’re all learning step by step, so be kind to yourself and appreciate how far you’ve come.
     </p>
 
     <!-- <p>
@@ -1240,35 +1392,35 @@
         <div class="dim-section-head">Your Ideal Self — Future Vision</div>
         <div class="dim-row">
           <div class="dim-name"><span class="dim-icon">💼</span>Career & Growth<small><span style="color:var(--warm);font-size:9px;">Q12</span> · Where do you want your career to be?</small></div>
-          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.2062162192" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+          <div class="dim-scale-wrap" data-real="entry.1005924975"><div class="slider-track-wrap"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.2062162192" oninput="this.closest('.dim-scale-wrap').querySelector('.dim-val').textContent=this.value"></div><div class="dim-val">5</div></div>
         </div>
         <div class="dim-row">
           <div class="dim-name"><span class="dim-icon">💰</span>Financial Stability<small><span style="color:var(--warm);font-size:9px;">Q13</span> · Where do you want your finances to be?</small></div>
-          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1242943320" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+          <div class="dim-scale-wrap" data-real="entry.2043169134"><div class="slider-track-wrap"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1242943320" oninput="this.closest('.dim-scale-wrap').querySelector('.dim-val').textContent=this.value"></div><div class="dim-val">5</div></div>
         </div>
         <div class="dim-row">
           <div class="dim-name"><span class="dim-icon">🏃</span>Physical Health<small><span style="color:var(--warm);font-size:9px;">Q14</span> · Where do you want your health to be?</small></div>
-          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1889314008" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+          <div class="dim-scale-wrap" data-real="entry.1515838282"><div class="slider-track-wrap"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1889314008" oninput="this.closest('.dim-scale-wrap').querySelector('.dim-val').textContent=this.value"></div><div class="dim-val">5</div></div>
         </div>
         <div class="dim-row">
           <div class="dim-name"><span class="dim-icon">🧠</span>Mental & Emotional Health<small><span style="color:var(--warm);font-size:9px;">Q15</span> · Where do you want your mental state to be?</small></div>
-          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.2141006275" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+          <div class="dim-scale-wrap" data-real="entry.174494248"><div class="slider-track-wrap"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.2141006275" oninput="this.closest('.dim-scale-wrap').querySelector('.dim-val').textContent=this.value"></div><div class="dim-val">5</div></div>
         </div>
         <div class="dim-row">
           <div class="dim-name"><span class="dim-icon">❤️</span>Relationships<small><span style="color:var(--warm);font-size:9px;">Q16</span> · Where do you want your relationships to be?</small></div>
-          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1720398854" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+          <div class="dim-scale-wrap" data-real="entry.1116749013"><div class="slider-track-wrap"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.1720398854" oninput="this.closest('.dim-scale-wrap').querySelector('.dim-val').textContent=this.value"></div><div class="dim-val">5</div></div>
         </div>
         <div class="dim-row">
           <div class="dim-name"><span class="dim-icon">📚</span>Skills & Knowledge<small><span style="color:var(--warm);font-size:9px;">Q17</span> · Where do you want your skills to be?</small></div>
-          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.56652701" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+          <div class="dim-scale-wrap" data-real="entry.2011222242"><div class="slider-track-wrap"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.56652701" oninput="this.closest('.dim-scale-wrap').querySelector('.dim-val').textContent=this.value"></div><div class="dim-val">5</div></div>
         </div>
         <div class="dim-row">
           <div class="dim-name"><span class="dim-icon">🌟</span>Purpose & Meaning<small><span style="color:var(--warm);font-size:9px;">Q18</span> · Where do you want your sense of purpose to be?</small></div>
-          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.413681691" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+          <div class="dim-scale-wrap" data-real="entry.588465121"><div class="slider-track-wrap"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.413681691" oninput="this.closest('.dim-scale-wrap').querySelector('.dim-val').textContent=this.value"></div><div class="dim-val">5</div></div>
         </div>
         <div class="dim-row">
           <div class="dim-name"><span class="dim-icon">🪞</span>Self-Confidence<small><span style="color:var(--warm);font-size:9px;">Q19</span> · Where do you want your confidence to be?</small></div>
-          <div class="dim-scale"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.448467461" oninput="this.nextElementSibling.textContent=this.value"><div class="dim-val">5</div></div>
+          <div class="dim-scale-wrap" data-real="entry.225113910"><div class="slider-track-wrap"><input class="dim-slider" type="range" min="1" max="10" value="5" name="entry.448467461" oninput="this.closest('.dim-scale-wrap').querySelector('.dim-val').textContent=this.value"></div><div class="dim-val">5</div></div>
         </div>
       </div>
 
@@ -1279,7 +1431,12 @@
         <button type="button" class="btn-next" onclick="nextStep(3)">Continue →</button>
       </div>
 
-      <!-- PEEK TEASER -->
+    </div>
+
+    <!-- ===== STEP 4: Reflection ===== -->
+    <div class="form-step" id="step-4">
+
+      <!-- PEEK TEASER at top of final section -->
       <div id="preview-teaser">
         <div class="teaser-blur-wrap">
           <div class="teaser-chart-preview" id="teaser-bars">
@@ -1292,10 +1449,6 @@
           <p>One final section to go. Your radar chart, archetype, gap analysis &amp; personalised action plan await.</p>
         </div>
       </div>
-    </div>
-
-    <!-- ===== STEP 4: Reflection ===== -->
-    <div class="form-step" id="step-4">
       <div class="step-label">Section 04 — Reflection</div>
       <div class="step-title">A moment of honesty</div>
       <div class="step-desc">Three final questions.</div>
@@ -1806,17 +1959,61 @@
   }
 
   function getActionSteps(ranked) {
-    const actions = {
-      'Career & Growth':    { title:'Design your next career move', desc:'Write a 3-month career action plan today. Identify one skill gap, one mentor to reach out to, and one project to take on that stretches you beyond your current comfort level.' },
-      'Financial Security': { title:'Build a simple money system',  desc:'Open a spreadsheet and track every rupee for 30 days. Knowledge is the first step. Then set up even \u20B9500/month auto-saving the habit matters more than the amount.' },
-      'Physical Health':    { title:'Start with 20 minutes a day',  desc:'Do not overhaul your entire lifestyle start by committing to just 20 minutes of movement every day for 21 days. Walk, stretch, or workout. Consistency before intensity.' },
-      'Mental Wellbeing':   { title:'Create a daily decompression ritual', desc:'Spend 10 minutes each night doing something purely restorative including journaling, breathing, music, no screens. Protect this time aggressively. Small mental hygiene habits prevent large mental health issues.' },
-      'Relationships':      { title:'Make one meaningful connection this week', desc:'Send a heartfelt message to someone you have drifted from. Or have one vulnerable conversation you have been avoiding. Deep relationships are built in small, honest moments.' },
-      'Skills & Knowledge': { title:'Commit to the 30-minute rule',  desc:'Block 30 minutes every day for deliberate skill-building. No distractions. Whether it is reading, practicing, or building and 30 focused minutes daily compounds into mastery over months.' },
-      'Purpose & Meaning':  { title:'Journal your "why" this weekend', desc:'Ask yourself: what would you do if money and status did not matter? Write for 20 minutes without judgment. Purpose is not found it is built through honest reflection and courageous action.' },
-      'Self-Confidence':    { title:'Do one uncomfortable thing daily', desc:'Confidence is built by evidence. Each day, do something that slightly scares you like speaking up in a meeting, share an opinion, approach someone new. Log it. Watch your confidence bank grow.' },
-    };
-    return ranked.slice(0,3).map(d => actions[d.label] || { title: 'Work on '+d.label, desc: 'Set a clear 30-day goal for this area and review it weekly.' });
+    // Score-aware action step generator.
+    // Each dimension has three tiers based on gap size and real-self score:
+    //   gap <= 2  → maintenance / fine-tuning (real is already high)
+    //   gap 3–5   → structured bridging (real is moderate)
+    //   gap >= 6  → foundational rebuild (real is low relative to ideal)
+    function stepFor(d) {
+      const g = d.gap;
+      const r = d.real;
+      const idealStr = d.ideal >= 9 ? 'near-perfect' : d.ideal >= 7 ? 'high' : 'meaningful';
+
+      if (d.label.includes('Career')) {
+        if (g <= 2) return { title: 'Leverage what\u2019s already working in your career', desc: `You scored ${r}/10 on Career \u2014 that\u2019s strong. The gap is narrow (${g} point${g!==1?'s':''}). Your action: identify the one lever that would move you from ${r} to ${d.ideal}. Is it visibility, a specific role, or a credential? Name it precisely and plan backward from there.` };
+        if (g <= 5) return { title: 'Close the career gap with a 90-day sprint', desc: `You rated your current career at ${r} but want to reach ${d.ideal}. That ${g}-point gap is bridgeable with focused effort. Identify one concrete opportunity \u2014 a project, a certification, or a conversation with a mentor \u2014 and commit to it in the next two weeks. Not someday. A date.` };
+        return { title: 'Rebuild your career narrative from the ground up', desc: `A ${g}-point gap between where you are (${r}) and where you want to be (${d.ideal}) in your career signals a structural mismatch, not just a habit issue. Start by asking: is your current path even pointed toward the version of success you described? If not, the most valuable thing you can do this month is map the right path, even if you can\u2019t walk it fully yet.` };
+      }
+      if (d.label.includes('Financial')) {
+        if (g <= 2) return { title: 'Fine-tune your financial system', desc: `Your Financial Security score of ${r}/10 is already solid \u2014 the gap to your ideal (${d.ideal}) is just ${g} point${g!==1?'s':''}. At this stage, the gains come from refinement: automate what you\u2019re already doing, review your savings rate, and identify one financial inefficiency to eliminate this month.` };
+        if (g <= 5) return { title: 'Build a system around your specific financial gap', desc: `You rated your Financial Security at ${r}/10 against an ideal of ${d.ideal}. That ${g}-point gap points to a system problem, not a discipline problem. This week: write down exactly what \u20B9${d.ideal * 10}K/month security would look like in your life. Then identify the single structural change \u2014 income source, expense, or savings habit \u2014 most likely to move the needle.` };
+        return { title: 'Address the financial gap at its root', desc: `A ${g}-point gap in Financial Security (${r} \u2192 ${d.ideal}) often means the gap isn\u2019t just about money habits \u2014 it\u2019s about income structure or financial knowledge. This week, audit honestly: is the gap a spending problem, an income problem, or an awareness problem? Each has a different first step, and starting with the right diagnosis saves months of wrong effort.` };
+      }
+      if (d.label.includes('Physical')) {
+        if (g <= 2) return { title: 'Protect and refine your physical health habits', desc: `Your Physical Health score of ${r}/10 is already ${r >= 7 ? 'high' : 'decent'} and the gap is small (${g} point${g!==1?'s':''}). At this level, the risk is regression, not improvement. Audit what\u2019s actually keeping you at ${r} \u2014 sleep, diet, or movement \u2014 and make the one change that would reliably close that remaining gap to ${d.ideal}.` };
+        if (g <= 5) return { title: 'Design a sustainable physical health upgrade', desc: `You rated your physical health at ${r}/10 but want to reach ${d.ideal}. That ${g}-point gap is real but specific: it\u2019s not about overhauling everything. Identify the one physical habit (sleep schedule, daily steps, or a recurring meal) that, if improved consistently for 30 days, would most directly raise your score. Start there only.` };
+        return { title: 'Start where you actually are, not where you wish you were', desc: `A ${g}-point gap in Physical Health (you rated yourself ${r}/10) suggests the basics may not yet be in place. The trap is planning an ambitious routine you won\u2019t sustain. Instead: commit to one physical anchor habit \u2014 chosen for ease, not impressiveness \u2014 and hold it for three weeks before adding anything. Rebuild the identity of someone who moves, first.` };
+      }
+      if (d.label.includes('Mental')) {
+        if (g <= 2) return { title: 'Protect your mental wellbeing proactively', desc: `Your Mental Wellbeing score of ${r}/10 is strong and the gap is small. At this level the work is preservation: notice what conditions allow you to feel at ${r} and actively protect them. Identify one recurring stressor you\u2019ve been tolerating and make a concrete plan to reduce it this week.` };
+        if (g <= 5) return { title: 'Identify your specific mental health drain', desc: `You rated Mental Wellbeing at ${r}/10 against an ideal of ${d.ideal}. Before adding habits, diagnose what is consistently lowering your score. Is it sleep, social exhaustion, unprocessed stress, or decision fatigue? Name the specific drain, then address that one thing \u2014 rather than adding a generic \u2018wellness routine\u2019 on top of an unaddressed source.` };
+        return { title: 'Treat mental wellbeing as a structural priority, not an afterthought', desc: `A ${g}-point gap in Mental Wellbeing (${r} \u2192 ${d.ideal}) suggests this area has been deprioritised for a while. The most important first step is not a habit \u2014 it\u2019s a conversation: with yourself, a trusted person, or a professional. Understand what is actually happening before deciding what to change. Clarity before action.` };
+      }
+      if (d.label.includes('Relationship')) {
+        if (g <= 2) return { title: 'Deepen the connections you already have', desc: `Your Relationships score of ${r}/10 is already ${r >= 7 ? 'strong' : 'decent'} and the gap is small. At this level, the gains come from depth, not breadth. Identify one relationship that matters to you and invest intentionally in it this week \u2014 a real conversation, not just presence.` };
+        if (g <= 5) return { title: 'Make one specific relational investment this week', desc: `You rated Relationships at ${r}/10 against an ideal of ${d.ideal}. That ${g}-point gap is likely not about the number of people in your life \u2014 it\u2019s about the quality of connection. This week, identify the one relationship whose depth, if improved, would most raise your score. Reach out with something real, not transactional.` };
+        return { title: 'Rebuild your relational foundation one step at a time', desc: `A ${g}-point gap in Relationships (${r} \u2192 ${d.ideal}) often reflects accumulated distance \u2014 from others, or from vulnerability itself. The entry point is not a grand gesture. It is one honest conversation with one person you care about. Not to fix everything, but to re-establish that you are someone who shows up.` };
+      }
+      if (d.label.includes('Skills')) {
+        if (g <= 2) return { title: 'Sharpen the edge on your existing skills', desc: `You rated Skills & Knowledge at ${r}/10 \u2014 that\u2019s already strong, and the gap is ${g} point${g!==1?'s':''}. At this stage, generalist learning won\u2019t move the needle. Identify the single, specific skill that separates your ${r} from a ${d.ideal} and build a 4-week focused practice plan around only that.` };
+        if (g <= 5) return { title: 'Commit to one learning project with a visible output', desc: `You rated Skills & Knowledge at ${r}/10 against an ideal of ${d.ideal}. The ${g}-point gap suggests your learning has been either passive or scattered. Pick one skill relevant to your top priority area and choose a project-based goal \u2014 something that produces a tangible output (a document, a build, a presentation) within 30 days. Output forces actual skill development.` };
+        return { title: 'Design a structured learning path, not just a habit', desc: `A ${g}-point gap in Skills & Knowledge (you rated yourself ${r}/10) suggests that informal, occasional learning isn\u2019t enough. This week, map what specifically reaching ${d.ideal} looks like \u2014 which concrete skills, in which order. Then choose one structured resource (a course, a book with exercises, or a mentor) and commit to a completion date. Plans without dates stay wishes.` };
+      }
+      if (d.label.includes('Purpose')) {
+        if (g <= 2) return { title: 'Articulate your purpose more precisely', desc: `Your Purpose & Meaning score of ${r}/10 is already ${r >= 7 ? 'strong' : 'decent'} and the gap is small. The next step is precision: write a one-sentence purpose statement this week. Vague purpose doesn\u2019t guide decisions. A sharp statement does.` };
+        if (g <= 5) return { title: 'Map the gap between your daily actions and your stated values', desc: `You rated Purpose & Meaning at ${r}/10 against an ideal of ${d.ideal}. That ${g}-point gap often reflects a mismatch between how you spend your time and what you actually care about. This week, list your top three stated values and audit whether your last 7 days reflected them. Where they didn\u2019t \u2014 that\u2019s where to start.` };
+        return { title: 'Start with what you know, not what you don\u2019t', desc: `A ${g}-point Purpose & Meaning gap (${r} \u2192 ${d.ideal}) can feel paralysing because the question feels too big. Approach it differently: instead of \u201Cwhat is my purpose,\u201D ask \u201Cwhat am I doing when I feel least empty?\u201D Write three specific answers. That list is more useful than any abstract exploration, and it\u2019s already inside you.` };
+      }
+      if (d.label.includes('Self-Confidence')) {
+        if (g <= 2) return { title: 'Consolidate your confidence by recording your wins', desc: `Your Self-Confidence score of ${r}/10 is strong and the gap to your ideal (${d.ideal}) is small. At this level, the risk is that confidence stays situational rather than becoming a stable trait. Start a weekly \u201Cevidence log\u201D: three specific things you did well each week. Review it when doubt creeps in. Confidence maintained is confidence compounded.` };
+        if (g <= 5) return { title: 'Close the confidence gap through deliberate exposure', desc: `You rated Self-Confidence at ${r}/10 but want to reach ${d.ideal}. That ${g}-point gap is not closed by thinking differently \u2014 it\u2019s closed by acting differently and noticing the result. This week, identify one specific context where your confidence is lowest and choose one small action to take in that context. Evidence before belief.` };
+        return { title: 'Rebuild confidence from the inside out, not performance outward', desc: `A ${g}-point confidence gap (you rated yourself ${r}/10) often has a specific origin \u2014 a pattern of comparison, past failure, or an environment that consistently undermined you. Before trying to act more confidently, it\u2019s worth identifying the one recurring thought or situation that most consistently shrinks you. Name it clearly. What you can name, you can start to work with.` };
+      }
+      // Fallback
+      return { title: `Address the ${g}-point gap in ${d.label}`, desc: `You rated ${d.label} at ${r}/10 against an ideal of ${d.ideal}. Set one measurable 30-day goal for this area and define what \u2018improved\u2019 looks like in specific, observable terms \u2014 not just how you feel, but what you do differently.` };
+    }
+
+    return ranked.slice(0, 3).map(d => stepFor(d));
   }
 
   function getDeeperPsychology(data) {
@@ -1882,6 +2079,33 @@
     }
 
     return { blocker, shadow, conflict };
+  }
+
+  // Gap-score-mapped closing quote
+  // avgGap ranges: 0–1.5 → Aristotle (alignment), 1.5–3 → Rogers (growth),
+  //                3–5 → Clear (systems), 5–7 → Frankl (meaning in struggle),
+  //                7+ → James (will & action)
+  function getClosingQuote(avgGap) {
+    if (avgGap <= 1.5) return {
+      text: 'We are what we repeatedly do. Excellence, then, is not an act, but a habit.',
+      author: 'Aristotle'
+    };
+    if (avgGap <= 3) return {
+      text: 'The curious paradox is that when I accept myself just as I am, then I can change.',
+      author: 'Carl Rogers'
+    };
+    if (avgGap <= 5) return {
+      text: 'You do not rise to the level of your goals. You fall to the level of your systems.',
+      author: 'James Clear, Atomic Habits'
+    };
+    if (avgGap <= 7) return {
+      text: 'Between stimulus and response there is a space. In that space is our power to choose our response. In our response lies our growth and our freedom.',
+      author: 'Viktor Frankl'
+    };
+    return {
+      text: 'The greatest revolution of our generation is the discovery that human beings, by changing the inner attitudes of their minds, can change the outer aspects of their lives.',
+      author: 'William James'
+    };
   }
 
   let radarChartInstance = null;
@@ -1961,17 +2185,31 @@
     // ⑤ Priority & Strength cards
     const top3 = data.ranked.slice(0,3);
     const bot3 = [...data.ranked].sort((a,b)=>a.gap-b.gap).slice(0,3);
+    // Find dims that appear in both lists
+    const top3Labels = new Set(top3.map(d=>d.label));
+    const bot3Labels = new Set(bot3.map(d=>d.label));
+    const overlap = [...top3Labels].filter(l => bot3Labels.has(l));
+    // Build overlap note if needed
+    let overlapNote = '';
+    if (overlap.length > 0) {
+      const overlapNames = overlap.map(l => {
+        const d = top3.find(x=>x.label===l);
+        return `${d.icon} ${d.label}`;
+      }).join(' and ');
+      overlapNote = `<div class="overlap-note">⚑ <strong>${overlapNames}</strong> appear${overlap.length===1?'s':''} in both columns. This means your real score here is already strong — but your ideal is set even higher. You're not starting from zero; you're refining from a solid base.</div>`;
+    }
     html += `<div class="r-sec-title">◈ Your Priorities & Strengths</div>`;
     html += `<div class="two-col">
       <div class="ps-card priority">
         <div class="ps-card-title">🔴 Top Priorities</div>
-        ${top3.map(d=>`<div class="ps-item"><div class="ps-dot"></div>${d.icon} ${d.label}</div>`).join('')}
+        ${top3.map(d=>`<div class="ps-item"><div class="ps-dot"></div>${d.icon} ${d.label}${top3Labels.has(d.label)&&bot3Labels.has(d.label)?' <span class="ps-dual-badge" title="Also a strength">★</span>':''}</div>`).join('')}
       </div>
       <div class="ps-card strength">
         <div class="ps-card-title">🟢 Your Strengths</div>
-        ${bot3.map(d=>`<div class="ps-item"><div class="ps-dot"></div>${d.icon} ${d.label}</div>`).join('')}
+        ${bot3.map(d=>`<div class="ps-item"><div class="ps-dot"></div>${d.icon} ${d.label}${top3Labels.has(d.label)&&bot3Labels.has(d.label)?' <span class="ps-dual-badge" title="Also a priority">★</span>':''}</div>`).join('')}
       </div>
-    </div>`;
+    </div>
+    ${overlapNote}`;
 
     // ⑥ Action Steps
     html += `<div class="r-sec-title">◈ 3 Personalised Action Steps</div>`;
@@ -2024,11 +2262,12 @@
       <div class="crisis-line">If life ever feels too heavy, please reach out to someone you trust. You do not have to carry it alone. Every single gap in this report is improvable. Every single one. You are worth the effort it takes to get there.</div>
     </div>`;
 
-    // Closing quote
+    // Closing — gap-mapped curated quote
+    const closingQuote = getClosingQuote(parseFloat(data.avgGap));
     html += `<div class="closing-block">
-      <blockquote>"No medicine can cure a negative mind, and no poison can kill a positive one."</blockquote>
-      <div class="closing-signoff">So always stay positive!</div>
-      <div class="closing-author">Sankalp Jaiswal</div>
+      <div class="closing-quote-mark">\u201C</div>
+      <blockquote class="closing-quote-text">${closingQuote.text}</blockquote>
+      <div class="closing-attribution">\u2014 ${closingQuote.author}</div>
     </div>`;
 
     html += `<button class="btn-print-report" onclick="printReport()">⬇ Save as PDF / Print Report</button>`;
@@ -2107,6 +2346,85 @@
     overlay.classList.remove('open');
     document.body.style.overflow = '';
   }
+
+
+  // ===== GHOST REAL-SELF MARKERS ON IDEAL SLIDERS =====
+  function injectGhostMarkers() {
+    document.querySelectorAll('#card-ideal .dim-scale-wrap[data-real]').forEach(wrap => {
+      const realName   = wrap.dataset.real;
+      const realSlider = document.querySelector('input[name="' + realName + '"]');
+      if (!realSlider) return;
+      const realVal = parseInt(realSlider.value, 10);
+
+      const trackWrap = wrap.querySelector('.slider-track-wrap');
+      if (!trackWrap) return;
+
+      // Remove old ghost if exists
+      const old = trackWrap.querySelector('.ghost-marker');
+      if (old) old.remove();
+
+      const marker = document.createElement('div');
+      marker.className = 'ghost-marker';
+      marker.innerHTML = '<div class="ghost-pin"></div><div class="ghost-label">Real: ' + realVal + '</div>';
+      trackWrap.appendChild(marker);
+    });
+  }
+
+  // Position ghost markers precisely using actual slider track width
+  function updateGhostPositions() {
+    document.querySelectorAll('#card-ideal .dim-scale-wrap[data-real]').forEach(wrap => {
+      const realName   = wrap.dataset.real;
+      const realSlider = document.querySelector('input[name="' + realName + '"]');
+      if (!realSlider) return;
+      const realVal = parseInt(realSlider.value, 10);
+
+      const trackWrap = wrap.querySelector('.slider-track-wrap');
+      const ghost     = trackWrap && trackWrap.querySelector('.ghost-marker');
+      if (!ghost) return;
+
+      const idealSlider = trackWrap.querySelector('.dim-slider');
+      const sliderRect  = idealSlider.getBoundingClientRect();
+      const wrapRect    = trackWrap.getBoundingClientRect();
+
+      // Thumb radius differs between mobile and desktop
+      const thumbR = window.innerWidth <= 768 ? 14 : 9;
+      const usable = sliderRect.width - thumbR * 2;
+      const leftPx = (sliderRect.left - wrapRect.left) + thumbR + ((realVal - 1) / 9) * usable;
+
+      ghost.style.left = leftPx + 'px';
+      ghost.querySelector('.ghost-label').textContent = 'Real: ' + realVal;
+    });
+  }
+
+  // Hook into nextStep to inject markers when step 3 activates
+  const _origNextStep = nextStep;
+  nextStep = function(from) {
+    _origNextStep(from);
+    if (from === 2) {
+      // Step 3 just became active
+      requestAnimationFrame(() => {
+        injectGhostMarkers();
+        updateGhostPositions();
+      });
+    }
+  };
+
+  // Also handle back navigation to step 3
+  const _origPrevStep = prevStep;
+  prevStep = function(from) {
+    _origPrevStep(from);
+    if (from === 4) {
+      requestAnimationFrame(() => {
+        injectGhostMarkers();
+        updateGhostPositions();
+      });
+    }
+  };
+
+  // Recalculate on resize
+  window.addEventListener('resize', () => {
+    if (currentStep === 3) updateGhostPositions();
+  });
 
 </script>
 
